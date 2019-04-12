@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  ndb:
+    image: mongo:3.4.16-jessie
+    container_name: ndb
+    restart: always
+    volumes: 
+      - ./db/mongo:/data/db
+  rdb:
+    image: mysql:5.7
+    container_name: rdb
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=1
+      - MYSQL_DATABASE=sms
+      - MYSQL_USER=sms
+      - MYSQL_PASSWORD=sms
+      - TZ=Asia/Tokyo
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    restart: always
+    volumes: 
+      - ./db/mysql:/data/db
+  webserver:
+    build: .
+    container_name: node
+    ports:
+      - 3000:3000
+    volumes: 
+      - ./src/:/home/node/sms/
+    links:
+      - rdb:mysql
+      - ndb:mongo
+    depends_on:
+      - rdb
+      - ndb
+    environment: 
+      - MONGODB_URI=mongodb://db:27017/smsdb
+

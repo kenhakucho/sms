@@ -1,41 +1,75 @@
-version: '3'
+version: '2'
 
 services:
   webserver:
-    build: .
+    image: node:4.3.2
+    # build: . 
+    tty: true
     container_name: node
     ports:
       - 3000:3000
     restart: always
     volumes: 
-      - ./src/:/home/node/sms/
+      - ./src:/home/node/sms
     links:
-      - rdb:mysql
-      - ndb:mongo
+      - mysql
+      - mongo:mongodb
+      - redis
     depends_on:
-      - rdb
-      - ndb
+      - mysql
+      - mongo
+      - redis
     environment: 
       - MONGODB_URI=mongodb://db:27017/smsdb
-  ndb:
+  mongo:
     image: mongo:3.4.16-jessie
-    container_name: ndb
+    container_name: mongo
+    tty: true
     restart: always
     volumes: 
       - ./db/mongo:/data/db
-  rdb:
+    ports:
+      - 27017:27017
+      - 27018:27018
+    environment:
+      -  'MONGODB_USER=root'
+      -  'MONGODB_PASS=password01'
+    command: mongod --smallfiles  
+  mongo-express:
+    image: mongo-express
+    container_name: mongo-ex
+    tty: true
+    restart: always
+    ports:
+      - 8081:8081
+    links:
+      - mongo
+    environment:
+      - 'ME_CONFIG_OPTIONS_EDITORTHEME=ambiance'
+      - 'ME_CONFIG_BASICAUTH_USERNAME=root'
+      - 'ME_CONFIG_BASICAUTH_PASSWORD=password01'
+  mysql:
     image: mysql:5.7
-    container_name: rdb
+    container_name: mysql
+    tty: true
     ports:
       - "3306:3306"
     environment:
       - MYSQL_RANDOM_ROOT_PASSWORD=1
       - MYSQL_DATABASE=sms
       - MYSQL_USER=sms
-      - MYSQL_PASSWORD=sms
+      - MYSQL_PASSWORD=password01
       - TZ=Asia/Tokyo
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     restart: always
     volumes: 
       - ./db/mysql:/data/db
+  redis:
+    restart: always
+    image: redis
+    container_name: redis
+    tty: true
+    volumes:
+      - ./redis:/data
+    command: redis-server --appendonly yes
 

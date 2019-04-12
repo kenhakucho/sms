@@ -1,0 +1,85 @@
+docker-compose build
+docker-compose up -d --build
+
+docker-compose ps
+docker-compose port webserver 3000
+docker-compose logs
+
+docker-compose config --service
+docker-compose config
+docker-compose down
+docker-compose kill
+
+docker run -itd -p 3000:3000 -v src:/home/node/sms --restart=always --name sms node /bin/bash
+docker container ls -a
+docker exec -it sms bash
+docker rm $(docker ps -a -q)
+
+cd /home/node
+npm install -g express-generator
+express --view=pug sms
+cd sms
+npm i --save express
+npm i --save websocket
+npm install 
+npm i log4js --save
+mkdir logs
+npm start
+
+#logger.js
+var log4js = require('log4js');
+var logger = exports = module.exports = {};
+log4js.configure({
+     appenders: [
+         {
+             "type": "file",
+             "category": "request",
+             "filename": "./logs/request.log",
+             "pattern": "-yyyy-MM-dd"
+         }
+    ]
+});
+
+logger.request = log4js.getLogger('request');
+
+# index.js
+var logger = require('./logger');
+
+router.get('/', function(req, res) {
+  logger.request.info('url:'+ decodeURI(req.url));
+  res.send(200);
+});
+
+
+npm i -g forever
+forever start /home/node/sms/app.js
+
+
+
+-----------------------------------------------------------------------
+Dockerfile 
+FROM node:8.9.4-alpine
+MAINTAINER Admin <admin@admin.com>
+#CMD echo "now running..."
+
+# ENV NODE_ENV production
+ENV NODE_ENV development
+
+RUN npm install -g express-generator
+WORKDIR /home/node
+
+# ADD src/ /home/node/sms/
+#RUN express --view=pug sms
+#WORKDIR /home/node/sms
+#RUN npm install --save express
+#RUN npm install --save websocket
+#RUN npm install 
+#RUN npm install log4js --save
+# RUN npm install -g npm-install-missing
+
+EXPOSE 3000
+#CMD npm start
+#RUN npm install -g forever
+#RUN forever start /home/node/sms/app.js
+
+-----------------------------------------------------------------------

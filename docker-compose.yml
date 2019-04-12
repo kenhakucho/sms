@@ -1,6 +1,22 @@
 version: '3'
 
 services:
+  webserver:
+    build: .
+    container_name: node
+    ports:
+      - 3000:3000
+    restart: always
+    volumes: 
+      - ./src/:/home/node/sms/
+    links:
+      - rdb:mysql
+      - ndb:mongo
+    depends_on:
+      - rdb
+      - ndb
+    environment: 
+      - MONGODB_URI=mongodb://db:27017/smsdb
   ndb:
     image: mongo:3.4.16-jessie
     container_name: ndb
@@ -22,19 +38,4 @@ services:
     restart: always
     volumes: 
       - ./db/mysql:/data/db
-  webserver:
-    build: .
-    container_name: node
-    ports:
-      - 3000:3000
-    volumes: 
-      - ./src/:/home/node/sms/
-    links:
-      - rdb:mysql
-      - ndb:mongo
-    depends_on:
-      - rdb
-      - ndb
-    environment: 
-      - MONGODB_URI=mongodb://db:27017/smsdb
 

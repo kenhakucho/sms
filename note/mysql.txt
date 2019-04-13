@@ -1,0 +1,186 @@
+npm install --save mysql
+
+// connection
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'me',
+  password : 'secret'
+});
+
+connection.connect(function(err) {
+  if (err) {
+    console.error('error connecting: ' + err.stack);
+    return;
+  }
+
+  console.log('connected as id ' + connection.threadId);
+});
+
+--------------------------------------------------------------------------------
+
+connection.query({
+  sql: 'SELECT * FROM `books` WHERE `author` = ?',
+  timeout: 40000, // 40s
+  values: ['David']
+}, function (error, results, fields) {
+});
+
+//insert
+connection.query("insert into posts ?",{title:'post'},function
+(error,results,fields){
+  if (err) throw err;
+  console.log(result.insertId);
+});
+
+
+//複数カラム
+connection.query("insert into posts set ?",{title:'post',content:'content'},function
+(error,results,fields){
+});
+
+//複数行insert
+connection.query('insert into hoge(NAME) values(?),(?),(?)',['fuga','fuga','fuga'],function(error,results,fields){
+});
+
+// DELETE
+connection.query('DELETE FROM posts WHERE title = "wrong"', function (err, result) {
+  if (err) throw err;
+
+  console.log('deleted ' + result.affectedRows + ' rows');
+})
+
+// UPDATE
+connection.query('UPDATE posts SET ...', function (err, result) {
+  if (err) throw err;
+
+  console.log('changed ' + result.changedRows + ' rows');
+})
+
+
+// 複数の命令文
+var connection = mysql.createConnection({multipleStatements: true});
+connection.query('SELECT 1; SELECT 2', function(err, results) {
+  if (err) throw err;
+
+  // `results` is an array with one element for every statement in the query:
+  console.log(results[0]); // [{1: 1}]
+  console.log(results[1]); // [{2: 2}]
+});
+
+// stream
+var query = connection.query('SELECT 1; SELECT 2');
+
+query
+  .on('fields', function(fields, index) {
+    // the fields for the result rows that follow
+  })
+  .on('result', function(row, index) {
+    // index refers to the statement this result belongs to (starts at 0)
+  });
+
+// tablename付き
+var options = {sql: '...', nestTables: '_'};
+connection.query(options, function(err, results) {
+  /* results will be an array like this now:
+  [{
+    table1_fieldA: '...',
+    table1_fieldB: '...',
+    table2_fieldA: '...',
+    table2_fieldB: '...',
+  }, ...]
+  */
+});
+
+//トランザクション開始
+connection.beginTransaction(function(err) {
+  if (err) { throw err; }
+  connection.query('INSERT INTO posts SET title=?', title, function(err, result) {
+    if (err) { 
+      //insertに失敗したら戻す
+      connection.rollback(function() {
+        throw err;
+      });
+    }
+
+    var log = 'Post ' + result.insertId + ' added';
+
+    connection.query('INSERT INTO log SET data=?', log, function(err, result) {
+      if (err) { 
+        //insertに失敗したら戻す
+        connection.rollback(function() {
+          throw err;
+        });
+      }  
+      //コミットする
+      connection.commit(function(err) {
+        if (err) { 
+          connection.rollback(function() {
+            throw err;
+          });
+        }
+        console.log('success!');
+      });
+    });
+  });
+});
+
+// connection pool
+var mysql = require('mysql');
+var pool  = mysql.createPool({
+  connectionLimit : 10,
+  host            : 'example.org',
+  user            : 'bob',
+  password        : 'secret'
+});
+
+
+pool.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
+  if (err) throw err;
+
+  console.log('The solution is: ', rows[0].solution);
+});
+
+// single connection
+var mysql = require('mysql');
+var pool  = mysql.createPool({
+  host            : 'example.org',
+  user            : 'bob',
+  password        : 'secret'
+});
+
+// release
+var mysql = require('mysql');
+var pool  = mysql.createPool(...);
+
+pool.getConnection(function(err, connection) {
+  // Use the connection
+  connection.query( 'SELECT something FROM sometable', function(err, rows) {
+    // プールに戻す
+    connection.release();
+    
+    
+    connection.destroy()
+  });
+});
+
+// pool events
+pool.on('connection', function (connection) {
+  connection.query('SET SESSION auto_increment_increment=1')
+});
+
+pool.on('enqueue', function () {
+  console.log('Waiting for available connection slot');
+});
+
+pool.end(function (err) {
+  // all connections in the pool have ended
+});
+
+// ping
+connection.ping(function (err) {
+  if (err) throw err;
+  console.log('Server responded to ping');
+})
+
+

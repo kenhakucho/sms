@@ -1,0 +1,80 @@
+CREATE DATABASE smsdb DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+DROP TABLE user;
+DROP TABLE room;
+DROP TABLE menber;
+DROP TABLE message;
+DROP TABLE stamp;
+DROP TABLE item;
+
+CREATE TABLE user(
+id int not null auto_increment, 
+mail varchar(255), 
+password varchar(255), 
+name varchar(40), 
+nickname varchar(30), 
+icon blob,
+enable boolean,
+made timestamp,
+PRIMARY KEY(id)
+);
+ALTER TABLE user ADD INDEX index_name(mail);
+
+CREATE PROCEDURE user_id()
+SELECT IFNULL(MAX(id)+1,0) FROM user;
+
+CREATE TABLE room(
+id int not null auto_increment, 
+user_id int not null,
+name varchar(20), 
+icon blob,
+enable boolean,
+made timestamp,
+PRIMARY KEY(id)
+);
+
+CREATE TABLE member(
+room_id int not null, 
+user_id int not null,
+enable boolean,
+made timestamp,
+PRIMARY KEY(room_id, user_id)
+);
+ALTER TABLE member ADD INDEX index_name(room_id);
+ALTER TABLE member ADD INDEX index_name(user_id);
+
+CREATE PROCEDURE user_id()
+SELECT IFNULL(MAX(id)+1,0) FROM user;
+
+CREATE TABLE message(
+id int not null auto_increment, 
+room_id int not null,
+user_id int not null,
+isstamp boolean not null,
+message varchar(255), 
+image blob,
+enable boolean,
+made timestamp,
+PRIMARY KEY(id)
+);
+ALTER TABLE message ADD INDEX index_name(made);
+
+CREATE TABLE stamp(
+id int not null auto_increment, 
+image blob,
+enable boolean,
+made timestamp,
+PRIMARY KEY(id)
+);
+
+CREATE TABLE item(
+id int not null auto_increment, 
+user_id int not null,
+stamp_id int not null,
+icon blob not null,
+enable boolean,
+made timestamp,
+PRIMARY KEY(id)
+);
+ALTER TABLE item ADD INDEX index_name(user_id);
+

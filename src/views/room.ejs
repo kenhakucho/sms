@@ -1,0 +1,28 @@
+    <% layout('layout') %>
+    <% if (messageList.length) { %>
+        <div class="white-bg">
+            <ul class="main-list">
+                <% messageList.forEach(function(message) { %>
+                    <li class="main-list_item">
+                        <div class="message_item">
+                            <p class="message_icon"><%= message.user_icon %></p>
+                            <p class="message_user"><%= message.user_nickname %></p>
+                            <p class="message_title"><%= message.message_message %></p>
+                            <p class="message_date"><%= message.massage_made %></p>
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    <% } %>
+
+    <form action="/room/<%= room.id %>" method="post" class="room-form">
+        <input type="text" name="message" class="input" required>
+        <button type="submit" class="submit">投稿</button>
+    </form>
+
+    <a href="/" class="btn">トップへもどる</a>
+    <% if (typeof user !== 'undefined') { %>
+      <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+    <% } %>
+

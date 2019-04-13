@@ -1,9 +1,9 @@
 version: '2'
 
 services:
-  webserver:
-    image: node:4.3.2
-    # build: . 
+  node:
+    # image: node:4.3.2
+    build: . 
     tty: true
     container_name: node
     ports:
@@ -13,63 +13,65 @@ services:
       - ./src:/home/node/sms
     links:
       - mysql
-      - mongo:mongodb
-      - redis
+#      - mongo:mongodb
+#      - redis
     depends_on:
       - mysql
-      - mongo
-      - redis
-    environment: 
-      - MONGODB_URI=mongodb://db:27017/smsdb
-  mongo:
-    image: mongo:3.4.16-jessie
-    container_name: mongo
-    tty: true
-    restart: always
-    volumes: 
-      - ./db/mongo:/data/db
-    ports:
-      - 27017:27017
-      - 27018:27018
-    environment:
-      -  'MONGODB_USER=root'
-      -  'MONGODB_PASS=password01'
-    command: mongod --smallfiles  
-  mongo-express:
-    image: mongo-express
-    container_name: mongo-ex
-    tty: true
-    restart: always
-    ports:
-      - 8081:8081
-    links:
-      - mongo
-    environment:
-      - 'ME_CONFIG_OPTIONS_EDITORTHEME=ambiance'
-      - 'ME_CONFIG_BASICAUTH_USERNAME=root'
-      - 'ME_CONFIG_BASICAUTH_PASSWORD=password01'
+#      - mongo
+#      - redis
+#    environment: 
+#      - MONGODB_URI=mongodb://db:27017/smsdb
+#  mongo:
+#    image: mongo:3.4.16-jessie
+#    container_name: mongo
+#    tty: true
+#    restart: always
+#    volumes: 
+#      - ./db/mongo:/data/db
+#    ports:
+#      - 27017:27017
+#      - 27018:27018
+#    environment:
+#      -  'MONGODB_USER=root'
+#      -  'MONGODB_PASS=password01'
+#    command: mongod --smallfiles  
+#  mongo-express:
+#    image: mongo-express
+#    container_name: mongo-ex
+#    tty: true
+#    restart: always
+#    ports:
+#      - 8081:8081
+#    links:
+#      - mongo
+#    environment:
+#      - 'ME_CONFIG_OPTIONS_EDITORTHEME=ambiance'
+#      - 'ME_CONFIG_BASICAUTH_USERNAME=root'
+#      - 'ME_CONFIG_BASICAUTH_PASSWORD=password01'
   mysql:
     image: mysql:5.7
     container_name: mysql
     tty: true
+    hostname: mysql
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=1
-      - MYSQL_DATABASE=sms
-      - MYSQL_USER=sms
+      - MYSQL_ROOT_PASSWORD=password01
+#      - MYSQL_RANDOM_ROOT_PASSWORD=1
+      - MYSQL_DATABASE=smsdb
+      - MYSQL_USER=root
       - MYSQL_PASSWORD=password01
       - TZ=Asia/Tokyo
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     restart: always
     volumes: 
       - ./db/mysql:/data/db
-  redis:
-    restart: always
-    image: redis
-    container_name: redis
-    tty: true
-    volumes:
-      - ./redis:/data
-    command: redis-server --appendonly yes
+#  redis:
+#    restart: always
+#    image: redis
+#    container_name: redis
+#    tty: true
+#    volumes:
+#      - ./redis:/data
+#    command: redis-server --appendonly yes
 

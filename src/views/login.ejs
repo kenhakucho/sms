@@ -1,0 +1,12 @@
+    <% layout('layout') %>
+    <form action="/login" method="post" class="room-form">
+        <span class="label">Eメール</span><input type="email" name="email" class="input" required><br>
+        <br>
+        <span class="label">パスワード</span><input type="password" name="password" class="input" required><br>
+        <br>
+        <button type="submit" class="submit">ログイン</button>
+    </form>
+    <% if (typeof noUser !== 'undefined') { %>
+        <p class="error"><%= noUser %></p>
+    <% } %>
+    <a href="/" class="btn">トップへもどる</a>

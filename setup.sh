@@ -16,6 +16,9 @@ npm install --save-dev gulp
 #npm i -g nodemon
 npm i nodemon
 
+npm install express-session --save
+npm install ejs-locals --save
+
 #export PATH=$PATH:`npm bin -g`
 #echo 'PATH=$PATH:$HOME/bin:`npm bin -g`' >> ~/.bash_profile
 #echo 'export PATH'
@@ -26,4 +29,11 @@ nodemon start
 
 
 npm install -g npm-install-missing
+
+
+
+
+# zombie poet check
+lsof -i -P | grep "LISTEN"
+screen
 

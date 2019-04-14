@@ -22,10 +22,11 @@ RUN npm install --save ejs
 RUN npm i --save websocket
 RUN npm install -g eslint eslint-config-airbnb eslint-plugin-react
 RUN npm i -g nodemon
-RUN npm i nodemon
+RUN npm i nodemon           # nodemon start
 RUN npm i --save mysql
 RUN npm install express-session --save
-RUN npm install ejs-locals --save
+RUN npm install ejs-locals --save      
+RUN npm install --save multer          # mkdir -p ./public/images/uploads
 
 EXPOSE 3000
 #CMD npm start

@@ -1,20 +1,21 @@
       <% layout('layout') %>
-      <form action="/" method="post" class="room-form">
-        ルーム名: <input type="text" name="title" class="input" required><br>
-        <br>
-        <button type="submit" class="submit">ルーム作成</button>
-        <br>
-      </form>
-      <ul class="main-list">
-        <% roomList.forEach(function(room) { %>
-          <li class="main-list__item">
-            <div class="room">
-              <p class="room_icon"><%= room.room_icon %></p>
-              <p class="room_name"><%= room.room_name %></p>
-            </div>
-          </li>
-        <% }); %>
-      </ul>
       <% if (typeof user !== 'undefined') { %>
+
+        <form action="/" method="post" class="room-form">
+          ルーム名: <input type="text" name="title" class="input" required><br>
+          <br>
+          <button type="submit" class="submit">ルーム作成</button>
+          <br>
+        </form>
+        <ul class="main-list">
+          <% roomList.forEach(function(room) { %>
+            <li class="main-list__item">
+              <div class="room">
+                <p class="room_icon"><%= room.room_icon %></p>
+                <p class="room_name"><a href="/room/<%= room.room_id %>"><%= room.room_name %></a></p>
+              </div>
+            </li>
+          <% }); %>
+        </ul>
         <span class="login-user"><%= user.name %>さんとしてログインしています</span>
       <% } %>

@@ -16,9 +16,13 @@
         </div>
     <% } %>
 
-    <form action="/room/<%= room.id %>" method="post" class="room-form">
+    <form action="/room/<%= room.id %>" method="post" enctype="multipart/form-data" class="room-form">
         <input type="text" name="message" class="input" required>
         <button type="submit" class="submit">投稿</button>
+        <div class="file-wrap">
+            画像を追加
+            <input type="file" name="image_file" class="file">
+        </div>
     </form>
 
     <a href="/" class="btn">トップへもどる</a>

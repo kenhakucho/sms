@@ -6,10 +6,10 @@ var connection = require('../mysqlConnection');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-  var userId = req.session.user_id? req.session.user_id: 0;
+  var userId = req.session.user_id? req.session.user_id: -1;
 
   var options = {
-    sql: 'SELECT room.id, room.name FROM member INNER JOIN room ON room.id=member.room_id WHERE member.user_id=' + userId + ';', 
+    sql: 'SELECT room.id, room.name FROM member INNER JOIN room ON room.id=member.room_id AND room.enable=1 WHERE member.user_id=' + userId + ';', 
     nestTables: '_'
   };
   connection.query(options, function(err, results) {
@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-  var userId = req.session.user_id? req.session.user_id: 0;
+  var userId = req.session.user_id? req.session.user_id: -1;
   var title = req.body.title;
   var createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
   console.log(title);

@@ -101,7 +101,7 @@ input:-webkit-autofill, textarea:-webkit-autofill {
 .main-list_item:first-child {
     margin-top: 0;
 }
-.room {
+.message_item {
     display: block;
     padding: 10px;
     border: 1px #ccc solid;

@@ -5,6 +5,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
+var http = require('http');
+var socketIO = require('socket.io');
 
 var indexRouter = require('./routes/index');
 var signupRouter = require('./routes/signup');
@@ -15,12 +17,6 @@ var logout = require('./routes/logout');
 var setUser = require('./setUser'); 
 
 var app = express();
-
-/**
-var server = app.listen(3000, function(){
-    console.log("Node.js is listening to PORT:" + server.address().port);
-});
-**/
 
 // view engine setup
 app.engine('ejs', engine);
@@ -61,6 +57,31 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+//------------------------------------------------------------------
+server = http.createServer(app); // add
+server.listen(app.get('port'), function(){ //add
+  console.log("Express server listening on port " + app.get('port'));
+});
+var io = socketIO.listen(server);
+
+// クライアントが接続してきたときの処理
+io.sockets.on('connection', function(socket) {
+  console.log("connection");
+  // メッセージを受けたときの処理
+  socket.on('message', function(data) {
+    // つながっているクライアント全員に送信
+    console.log("message");
+    io.sockets.emit('message', { value: data.value });
+  });
+
+  // クライアントが切断したときの処理
+  socket.on('disconnect', function(){
+    console.log("disconnect");
+  });
+});
+//------------------------------------------------------------------
+
 
 module.exports = app;
 

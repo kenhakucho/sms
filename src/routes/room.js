@@ -14,34 +14,23 @@ router.get('/:room_id', function(req, res, next) {
   connection.query('SELECT * FROM member WHERE room_id=? and user_id=? and enable=1 LIMIT 1',
             [roomId, userId], function(err, rows) {
     var enable = rows.length? rows[0].enable: false;
-    console.log("userId  : " + userId);
-    console.log("roomId  : " + roomId);
-    console.log("enable  : " + enable)
 
     if (enable) {
-      var roomQuery = 'SELECT * FROM room WHERE id = ' + roomId;
-      var messageQuery = {
-        sql: 'SELECT * FROM message LEFT JOIN user ON user.id=message.user_id ' 
-             + ' WHERE message.room_id = ' + roomId + ' and message.enable=1 '
-             + ' ORDER BY message.made ASC;',
-        nestTables: '_'
-      }
-
-      console.log(roomQuery);
-      console.log(messageQuery);
-
-      connection.query(roomQuery, function(err, room) {
-        connection.query(messageQuery, function(err, results) {
+      connection.query('SELECT * FROM room WHERE id = ?', roomId, function(err, room) {
+        var postQuery = {
+          sql: 'SELECT *, DATE_FORMAT(post.made, "%k:%i") AS madetime FROM post LEFT JOIN user ON user.id=post.user_id WHERE post.room_id = ? and post.enable=1 ORDER BY post.made ASC;',
+          nestTables: '_'
+        }
+    
+        connection.query(postQuery, roomId, function(err, results) {
           res.render('room', {
             title: room[0].name,
             room: room[0],
-            messageList: results
+            postList: results
           });
         });
       });
-
     } else {
-      console.log(roomQuery);
       res.redirect('/');
     }
   });    
@@ -50,40 +39,42 @@ router.get('/:room_id', function(req, res, next) {
 // 投稿
 router.post('/:room_id', upload.single('image_file'), function(req, res, next) {
   console.log("POST room/:room_id")
-  console.log("uploads : " + req.file);
-  console.log("name : " + req.name);
+  console.log("image_file : " + req.image_file);
+  console.log("message    : " + req.message);
     
-  var userId  = req.session.user_id? req.session.user_id: 0;
+  var userId  = req.session.user_id? req.session.user_id: -1;
   var roomId  = req.params.room_id;
   var message = req.body.message;
-  var file   = req.file.name;
-  var isStamp = file? 1:0;
+  var isStamp = 0;
+  var file    = '';
+  if (req.file) {
+    isStamp = 1;
+    file    = req.image_file.name;      
+  } 
 
-  connection.query('SELECT * FROM member WHERE room_id=? and user_id=? and enable=1 LIMIT 1',
+  if (isStamp == 0 && message == "") {
+      res.redirect('/room/' + roomId);
+  } else {  
+    connection.query('SELECT * FROM member WHERE room_id=? and user_id=? and enable=1 LIMIT 1',
             [roomId, userId], function(err, rows) {
-    var enable = rows.length? rows[0].enable: false;
-    console.log("enable  : " + enable)
-    if (isUser) {
-      console.log("userId  : " + userId);
-      console.log("roomId  : " + roomId);
-      console.log("message : " + message);
+      var enable = rows.length? rows[0].enable: false;
+      console.log("enable  : " + enable)
 
-      connection.query('INSERT INTO message SET ?', 
-        {
-          room_id: roomId,
-          user_id: userId,
-          isstamp: isStamp,
-          message: message,
-          file: file     
-        }, function(err, rows) {
-        console.log(rows);
-        res.redirect('/room/' + roomId);
-      });
-
-    } else {
-        res.redirect('/');
-    }
-  });
+      if (enable) {
+        connection.query('INSERT INTO post SET ?', {
+            room_id: roomId,
+            user_id: userId,
+            isstamp: isStamp,
+            message: message,
+            file: file     
+          }, function(err, rows) {
+            res.redirect('/room/' + roomId);
+        });
+      } else {
+          res.redirect('/');
+      }
+    });
+  }
 });
 
 module.exports = router;

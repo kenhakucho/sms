@@ -27,6 +27,9 @@ RUN npm i --save mysql
 RUN npm install express-session --save
 RUN npm install ejs-locals --save      
 RUN npm install --save multer          # mkdir -p ./public/images/uploads
+RUN npm install sass --save
+RUN npm install node-sass
+RUN npm i --save socket.io
 
 EXPOSE 3000
 #CMD npm start

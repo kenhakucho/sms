@@ -2,7 +2,7 @@ CREATE DATABASE smsdb DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 DROP TABLE user;
 DROP TABLE room;
-DROP TABLE menber;
+DROP TABLE member;
 DROP TABLE message;
 DROP TABLE stamp;
 DROP TABLE item;
@@ -18,7 +18,7 @@ enable boolean default 1,
 made timestamp,
 PRIMARY KEY(id)
 );
-ALTER TABLE user ADD INDEX index_name(mail);
+ALTER TABLE user ADD INDEX user_index_01(mail);
 
 CREATE PROCEDURE user_id()
 SELECT IFNULL(MAX(id)+1,0) FROM user;
@@ -40,13 +40,13 @@ enable boolean default 1,
 made timestamp,
 PRIMARY KEY(room_id, user_id)
 );
-ALTER TABLE member ADD INDEX index_name(room_id);
-ALTER TABLE member ADD INDEX index_name(user_id);
+ALTER TABLE member ADD INDEX member_index_01(room_id);
+ALTER TABLE member ADD INDEX member_index_02(user_id);
 
 CREATE PROCEDURE user_id()
 SELECT IFNULL(MAX(id)+1,0) FROM user;
 
-CREATE TABLE message(
+CREATE TABLE post(
 id int not null auto_increment, 
 room_id int not null,
 user_id int not null,
@@ -57,7 +57,7 @@ enable boolean default 1,
 made timestamp,
 PRIMARY KEY(id)
 );
-ALTER TABLE message ADD INDEX index_name(made);
+ALTER TABLE post ADD INDEX post_index_01(made);
 
 CREATE TABLE stamp(
 id int not null auto_increment, 
@@ -77,5 +77,5 @@ enable boolean default 1,
 made timestamp,
 PRIMARY KEY(id)
 );
-ALTER TABLE item ADD INDEX index_name(user_id);
+ALTER TABLE item ADD INDEX item_index_01(user_id);
 

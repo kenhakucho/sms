@@ -1,5 +1,5 @@
-<script>
-  $('#upfile').change(function(){
+<script type="text/javascript">
+  $('#image_file').change(function(){
     if (this.files.length > 0) {
     var file = this.files[0];    
     var reader = new FileReader();
@@ -10,32 +10,31 @@
     }
   }
 });
-    
-<script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript">
-// var socket = io.connect('http://localhost:3000');
-var socket = io.connect('http://10.211.55.2/');
-socket.on('connect', function(msg) {
-  console.log("connet");
-  document.getElementById("connectId").innerHTML = 
-    "あなたの接続ID::" + socket.socket.transport.sessid;
-  document.getElementById("type").innerHTML = 
-    "接続方式::" + socket.socket.transport.name;
-});
 
-// メッセージを受けたとき
-socket.on('message', function(msg) {
-  // メッセージを画面に表示する
-  document.getElementById("receiveMsg").innerHTML = msg.value;
-});
+  var socket = io();
+  // 送信
+  $('form').submit(function(){
+    socket.emit('chat message', $('#m').val());
+    $('#m').val('');
+    return false;
+  });
 
-// メッセージを送る
+  // 受信
+  socket.on('chat message', function(msg){
+    $('#messages').append($('<li>').text(msg));
+  });
+
+
 function SendMsg() {
   var msg = document.getElementById("message").value;
-  // メッセージを発射する
-  socket.emit('message', { value: msg });
+  var image_file = document.getElementById("image_file")[0];
+  var reader = new FileReader();
+  reader.readAsDataURL(file);
+    
+  socket.emit('message', { value: msg },
+              'image_file', {value: reader.result});
 }
-// 切断する
+
 function DisConnect() {
   var msg = socket.socket.transport.sessid + "は切断しました。";
   // メッセージを発射する
@@ -53,6 +52,7 @@ function DisConnect() {
                 <% postList.forEach(function(post) { %>
                     <li class="main-list_item">
                         <div class="post_item">
+                        <p class="post_date"><%= post._madetime %></p>
                           <% if (user.id == post.user_id) { %>
                             <p class="post_icon left"><img width="45" height="45" src="/images/uploads/<%= post.user_icon %>"/></p>
                             <p class="post_user"><%= post.user_nickname %>(<%= post.user_name %>)</p>
@@ -60,7 +60,6 @@ function DisConnect() {
                               <p class="post_image"><img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/></p>
                             <% } %>
                             <p class="post_message"><%= post.post_message %></p>
-                            <p class="post_date"><%= post._madetime %></p>
                           <% } else { %>
                             <p class="post_icon right"><img width="45" height="45" src="/images/uploads/<%= post.user_icon %>"/></p>
                             <p class="post_user"><%= post.user_nickname %>(<%= post.user_name %>)</p>
@@ -68,7 +67,6 @@ function DisConnect() {
                               <p class="post_image"><img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/></p>
                             <% } %>
                             <p class="post_message"><%= post.post_message %></p>
-                            <p class="post_date"><%= post._madetime %></p>
                           <% } %>
 
                         </div>
@@ -79,16 +77,25 @@ function DisConnect() {
     <% } %>
 
     <form action="/room/<%= room.id %>" method="post" enctype="multipart/form-data" class="room-form">
-        <input type="text" name="message" class="input">
-        <button type="submit" class="submit">投稿</button>        
+        <input type="text" id="message" name="message" class="input">
+        <button onclick="SendMsg()">投稿</button>
         <br>
         
         <button class="file-wrap">
-            <span class="label">画像<input type="file" id="upfile" name="image_file" class="file"></span>
+            <span class="label">画像<input type="file" id="image_file" name="image_file" class="file"></span>
         </button>
         <br>
         <p><img id="thumbnail" src=""/></p>
     </form>
+
+  <h1>socket.ioのサンプルプログラム</h1>
+  <div id="connectId"></div>
+  <div id="type"></div>
+  <br>
+  <input type="text" id="message" value="">
+  <input type="button" value="メッセージを送る" onclick="SendMsg()">
+  <input type="button" value="切断する" onclick="DisConnect()">
+  <div id="receiveMsg"></div>
 
     <a href="/" class="btn"><button>トップへもどる</button></a>
     <% if (typeof user !== 'undefined') { %>

@@ -32,6 +32,7 @@ RUN npm install node-sass
 RUN npm i --save socket.io
 
 EXPOSE 3000
+EXPOSE 13000
 #CMD npm start
 RUN npm install -g forever
 #RUN forever start /home/node/sms/app.js

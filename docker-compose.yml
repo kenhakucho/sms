@@ -8,6 +8,8 @@ services:
     container_name: node
     ports:
       - 3000:3000
+      - 13000:13000
+      - 23000:23000
     restart: always
     volumes: 
       - ./src:/home/node/sms

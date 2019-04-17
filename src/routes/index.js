@@ -34,7 +34,6 @@ router.post('/', function(req, res, next) {
     if (err) { throw err; }
     connection.query('INSERT INTO room SET user_id=?, name=?',[userId, title], function(err, result) {
       if (err) { 
-        //insertに失敗したら戻す
         connection.rollback(function() {
           console.log("INSERT INTO room NG"); 
           throw err;

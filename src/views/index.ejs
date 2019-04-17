@@ -7,15 +7,17 @@
           <button type="submit" class="submit">ルーム作成</button>
           <br>
         </form>
-        <ul class="main-list">
+        <div class="white-bg scroll">
+          <ul class="main-list">
           <% roomList.forEach(function(room) { %>
-            <li class="main-list__item">
-              <div class="room">
-                <p class="room_icon"><%= room.room_icon %></p>
-                <p class="room_name"><a href="/room/<%= room.room_id %>"><%= room.room_name %></a></p>
+            <li class="main-list_item">
+              <div class="post_item">
+                <p class="post_icon"><%= room.room_icon %></p>
+                <p class="post_name"><a href="/room/<%= room.room_id %>"><%= room.room_name %></a></p>
               </div>
             </li>
-          <% }); %>
-        </ul>
+           <% }); %>
+          </ul>
+        </div>
         <span class="login-user"><%= user.name %>さんとしてログインしています</span>
       <% } %>

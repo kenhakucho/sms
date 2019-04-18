@@ -1,9 +1,17 @@
     <% layout('layout') %>
     <form action="/login" method="post" class="room-form">
-        <span class="label">Eメール</span><input type="email" name="email" class="input" required><br>
-        <br>
-        <span class="label">パスワード</span><input type="password" name="password" class="input" required><br>
-        <br>
+        <div class="cp_iptxt">
+          <input class="ef" width="80%" type="email" placeholder="" name="email" required>
+          <label>メールアドレス</label>
+          <span class="focus_line"><i></i></span>
+        </div>
+
+        <div class="cp_iptxt">
+          <input class="ef" type="password" placeholder="" name="password" required>
+          <label>パスワード</label>
+          <span class="focus_line"><i></i></span>
+        </div>
+
         <button type="submit" class="submit">ログイン</button>
     </form>
     <% if (typeof noUser !== 'undefined') { %>

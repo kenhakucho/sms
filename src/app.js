@@ -39,9 +39,11 @@ app.use('/room', setUser, roomRouter);
 app.use('/login', login); 
 app.use('/logout', logout); 
 
+/**
 app.get('/test', function(req, res){
   res.sendfile('public/test.html');
 });
+**/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

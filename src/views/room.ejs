@@ -1,104 +1,156 @@
-<script type="text/javascript">
-  $('#image_file').change(function(){
-    if (this.files.length > 0) {
-    var file = this.files[0];    
-    var reader = new FileReader();
-    reader.readAsDataURL(file);
-    
-    reader.onload = function() {
-      $('#thumbnail').attr('src', reader.result );
-    }
-  }
-});
+      <% layout('layout') %>
+      <div class="line-bc">
+        <% postList.forEach(function(post) { %>
+
+          <% if (user.id == post.user_id) { %> 
+            <div class="mycomment">
+              <div class="faceicon">
+                <label><%= post._madetime %></label>
+                <p><span><%= post.post_message %>
+                    <% if (post.isstamp==1) { %>
+                    <img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/>
+                  <% } %>
+                    </span></p>
+                <div class="box">
+                  <img width="60" height="60" src="/images/uploads/<%= post.user_icon %>"/><br>
+                  <span><%= post.user_nickname %></span>
+                </div>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="balloon6">      
+              <div class="faceicon">
+                <img width="60" height="60" src="/images/uploads/<%= post.user_icon %>"/>
+              </div>
+              <div class="chatting">
+                <div class="says">
+
+                </div>
+              </div>                
+          <% } %>
+        <% }); %>          
+    </div>
+        
+    <form enctype="multipart/form-data" method="post">
+      <input id="m" autocomplete="off" /><button>投稿</button>
+      <br>
+      <input type="file" name="image_file" accept="image/*">
+      <button class="btn btn-primary" id="upload">アップロード</button>
+    </form>
+    <canvas id="canvas" width="0" height="0"></canvas>
+
+    <a href="/" class="btn"><button>トップへもどる</button></a>
+<script>
 
   var socket = io();
-  // 送信
+
   $('form').submit(function(){
-    socket.emit('chat message', $('#m').val());
-    $('#m').val('');
+    if () {
+         
+    } else {
+      socket.emit('chat message', $('#m').val());
+      $('#m').val('');
+    }
     return false;
   });
 
-  // 受信
   socket.on('chat message', function(msg){
     $('#messages').append($('<li>').text(msg));
   });
 
+$(function() {
+  var file = null; // 選択されるファイル
+  var blob = null; // 画像(BLOBデータ)
+  const THUMBNAIL_WIDTH = 500; // 画像リサイズ後の横の長さの最大値
+  const THUMBNAIL_HEIGHT = 500; // 画像リサイズ後の縦の長さの最大値
 
-function SendMsg() {
-  var msg = document.getElementById("message").value;
-  var image_file = document.getElementById("image_file")[0];
-  var reader = new FileReader();
-  reader.readAsDataURL(file);
-    
-  socket.emit('message', { value: msg },
-              'image_file', {value: reader.result});
-}
+  // ファイルが選択されたら
+  $('input[type=file]').change(function() {
+    // ファイルを取得
+    file = $(this).prop('files')[0];
+    if (file.type != 'image/jpeg' && file.type != 'image/png') {
+      file = null;
+      blob = null;
+      return;
+    }
 
-function DisConnect() {
-  var msg = socket.socket.transport.sessid + "は切断しました。";
-  // メッセージを発射する
-  socket.emit('message', { value: msg });
-  // socketを切断する
-  socket.disconnect();
-}
+    // リサイズ
+    var image = new Image();
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      image.onload = function() {
+        var width, height;
+        if(image.width > image.height){
+          // 横長の画像は横のサイズを指定値
+          var ratio = image.height/image.width;
+          width = THUMBNAIL_WIDTH;
+          height = THUMBNAIL_WIDTH * ratio;
+        } else {
+          // 縦長の画像は縦のサイズを指定値
+          var ratio = image.width/image.height;
+          width = THUMBNAIL_HEIGHT * ratio;
+          height = THUMBNAIL_HEIGHT;
+        }
+        // サムネ描画用canvasのサイズを上で算出した値に変更
+        var canvas = $('#canvas')
+                     .attr('width', width)
+                     .attr('height', height);
+        var ctx = canvas[0].getContext('2d');
+        // canvasに既に描画されている画像をクリア
+        ctx.clearRect(0,0,width,height);
+        // canvasにサムネイルを描画
+        ctx.drawImage(image,0,0,image.width,image.height,0,0,width,height);
 
+        // canvasからbase64画像データを取得
+        var base64 = canvas.get(0).toDataURL('image/jpeg');        
+        // base64からBlobデータを作成
+        var barr, bin, i, len;
+        bin = atob(base64.split('base64,')[1]);
+        len = bin.length;
+        barr = new Uint8Array(len);
+        i = 0;
+        while (i < len) {
+          barr[i] = bin.charCodeAt(i);
+          i++;
+        }
+        blob = new Blob([barr], {type: 'image/jpeg'});
+        console.log(blob);
+      }
+      image.src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  });
+
+
+  // アップロード開始ボタンがクリックされたら
+  $('#upload').click(function(){
+
+    // ファイルが指定されていなければ何も起こらない
+    if(!file || !blob) {
+      return;
+    }
+
+    var name, fd = new FormData();
+    fd.append('file', blob); // ファイルを添付する
+
+    $.ajax({
+      url: "http://exapmle.com", // 送信先
+      type: 'POST',
+      dataType: 'json',
+      data: fd,
+      processData: false,
+      contentType: false
+    })
+    .done(function( data, textStatus, jqXHR ) {
+      // 送信成功
+    })
+    .fail(function( jqXHR, textStatus, errorThrown ) {
+      // 送信失敗
+    });  
+
+  });
+
+});
 </script>
 
-    <% layout('layout') %>
-    <% if (postList.length) { %>
-        <div class="white-bg scroll">
-            <ul class="main-list">
-                <% postList.forEach(function(post) { %>
-                    <li class="main-list_item">
-                        <div class="post_item">
-                        <p class="post_date"><%= post._madetime %></p>
-                          <% if (user.id == post.user_id) { %>
-                            <p class="post_icon left"><img width="45" height="45" src="/images/uploads/<%= post.user_icon %>"/></p>
-                            <p class="post_user"><%= post.user_nickname %>(<%= post.user_name %>)</p>
-                            <% if (post.isstamp==1) { %>
-                              <p class="post_image"><img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/></p>
-                            <% } %>
-                            <p class="post_message"><%= post.post_message %></p>
-                          <% } else { %>
-                            <p class="post_icon right"><img width="45" height="45" src="/images/uploads/<%= post.user_icon %>"/></p>
-                            <p class="post_user"><%= post.user_nickname %>(<%= post.user_name %>)</p>
-                            <% if (post.isstamp==1) { %>
-                              <p class="post_image"><img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/></p>
-                            <% } %>
-                            <p class="post_message"><%= post.post_message %></p>
-                          <% } %>
-
-                        </div>
-                    </li>
-                <% }); %>
-            </ul>
-        </div>
-    <% } %>
-
-    <form action="/room/<%= room.id %>" method="post" enctype="multipart/form-data" class="room-form">
-        <input type="text" id="message" name="message" class="input">
-        <button onclick="SendMsg()">投稿</button>
-        <br>
-        
-        <button class="file-wrap">
-            <span class="label">画像<input type="file" id="image_file" name="image_file" class="file"></span>
-        </button>
-        <br>
-        <p><img id="thumbnail" src=""/></p>
-    </form>
-
-  <h1>socket.ioのサンプルプログラム</h1>
-  <div id="connectId"></div>
-  <div id="type"></div>
-  <br>
-  <input type="text" id="message" value="">
-  <input type="button" value="メッセージを送る" onclick="SendMsg()">
-  <input type="button" value="切断する" onclick="DisConnect()">
-  <div id="receiveMsg"></div>
-
-    <a href="/" class="btn"><button>トップへもどる</button></a>
-    <% if (typeof user !== 'undefined') { %>
-      <span class="login-user"><%= user.name %>さんとしてログインしています</span>
-    <% } %>
 

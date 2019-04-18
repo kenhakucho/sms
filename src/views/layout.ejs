@@ -7,7 +7,7 @@
 <meta name="format-detection" content="telephone=no">
 <link rel='stylesheet' href='/stylesheets/style.css'>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>    
-<script src="http://localhost:13000/socket.io/socket.io.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 <div class="wrapper">
@@ -16,9 +16,15 @@
       <a href="/logout" class="btn"><button>ログアウト</button></a>
     <% } else { %>
       <a href="/signup" class="btn"><button>会員登録</button></a>
-      <a href="/login" class="btn"><button>ログイン</button></a>
+      <% if ( title !== "ログイン" && title !== "login") { %>
+        <a href="/login" class="btn"><button>ログイン</button></a>
+      <% } %>
     <% } %>
 </div>
+    <% if (typeof user !== 'undefined') { %>
+      <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+    <% } %>
+
 </body>
 </html>
 

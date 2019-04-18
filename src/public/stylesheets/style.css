@@ -1,89 +1,109 @@
 @charset "UTF-8";
 /* http://css2sass.herokuapp.com */
-html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
-  vertical-align: baseline; }
-
-/* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-  display: block; }
-
-body {
-  line-height: 1; }
-
-ol, ul {
-  list-style: none; }
-
-blockquote, q {
-  quotes: none; }
-
-blockquote:before, blockquote:after {
-  content: '';
-  content: none; }
-
-q:before, q:after {
-  content: '';
-  content: none; }
-
-table {
-  border-collapse: collapse;
-  border-spacing: 0; }
-
-/*
- * Base */
-html {
-  min-height: 100%;
-  -webkit-text-size-adjust: 100%; }
-
-body {
-  position: relative;
-  min-height: 100%;
-  font-size: 14px;
-  color: #333;
-  line-height: 1.3;
-  word-wrap: break-word;
-  font-family: YuGothic, '游ゴシック', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-  background-color: #fafafa; }
-
-a {
-  color: inherit;
-  text-decoration: none; }
-
-img {
-  vertical-align: middle;
-  -webkit-touch-callout: none; }
 
 ol, ul, li {
-  list-style: none; }
+  list-style: none; 
+}
 
-span, i {
-  display: inline-block; }
+/** form start ------------------------------- **/
+.room-form {
+    text-align: center;
+}
+.cp_iptxt {
+    text-align: left;
+	position: relative;
+	width: 90%;
+	margin: 40px 3%;
+}
+.cp_iptxt input {
+	font: 15px/24px sans-serif;
+	box-sizing: border-box;
+	width: 100%;
+	letter-spacing: 1px;
+	padding-left: 4em;
+}
+.cp_iptxt input:focus {
+	outline: none;
+}
+.ef {
+	padding: 7px 14px;
+	transition: 0.4s;
+	border: 1px solid #1b2538;
+	background: transparent;
+}
+.ef ~ .focus_line:before,
+.ef ~ .focus_line:after {
+	position: absolute;
+	top: -1px;
+	left: 50%;
+	width: 0;
+	height: 2px;
+	content: '';
+	transition: 0.4s;
+	background-color: #da3c41;
+}
+.ef ~ .focus_line:after {
+	top: auto;
+	bottom: 0;
+}
+.ef ~ .focus_line i:before,
+.ef ~ .focus_line i:after {
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 2px;
+	height: 0;
+	content: '';
+	transition: 0.6s;
+	background-color: #da3c41;
+}
+.ef ~ .focus_line i:after {
+	right: 0;
+	left: auto;
+}
+.ef:focus ~ .focus_line:before,
+.ef:focus ~ .focus_line:after,
+.cp_iptxt.ef ~ .focus_line:before,
+.cp_iptxt.ef ~ .focus_line:after {
+	left: 0;
+	width: 100%;
+	transition: 0.4s;
+}
+.ef:focus ~ .focus_line i:before,
+.ef:focus ~ .focus_line i:after,
+.cp_iptxt.ef ~ .focus_line i:before,
+.cp_iptxt.ef ~ .focus_line i:after {
+	top: -1px;
+	height: 100%;
+	transition: 0.6s;
+}
+.ef ~ label {
+	position: absolute;
+	z-index: -1;
+	top: 10px;
+	left: 14px;
+	width: 100%;
+	transition: 0.3s;
+	letter-spacing: 0.5px;
+	color: #aaaaaa;
+}
+.ef:focus ~ label,
+.cp_iptxt.ef ~ label {
+	font-size: 12px;
+	top: -18px;
+	left: 0;
+	transition: 0.3s;
+	color: #da3c41;
+}
+/** form end ------------------------------- **/
 
-input, textarea, button {
-  margin: 0;
-  padding: 0;
-  outline: none;
-  border: none;
-  background-color: inherit;
-  color: inherit;
-  -webkit-appearance: none; }
-
-input:-webkit-autofill, textarea:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset; }
-
-.scroll{overflow-y:scroll;}
-.scroll::-webkit-scrollbar{width:10px;}/*バーの太さ*/
-.scroll::-webkit-scrollbar-track{background:#dddddd;}/*バーの背景色*/
-.scroll::-webkit-scrollbar-thumb{background:#10e0bb;}/*バーの色*/
-
-/*
- * Main */
-.wrapper {
-  padding: 10px 10px 37px; }
+/** index start ------------------------------- **/
+.white-bg {
+  padding: 10px;
+  border: 1px #ccc solid;
+  background-color: #fff;
+  height: 80%;
+}
 
 .main-title {
   margin-bottom: 20px;
@@ -95,53 +115,13 @@ input:-webkit-autofill, textarea:-webkit-autofill {
   .main-list_item:first-child {
     margin-top: 0; }
 
-.message_item {
+.post_item {
   display: block;
   padding: 10px;
   border: 1px #ccc solid;
   background-color: #fff; }
-
-.room_name {
-  margin-bottom: 5px;
-  font-size: 16px;
-  font-weight: bold; }
-
-.room_icon {
-  font-size: 12px;
-  color: #ccc;
-  text-align: right; }
-
-.white-bg {
-  padding: 10px;
-  border: 1px #ccc solid;
-  background-color: #fff;
-  height: 80%;
-}
-
-.message_image {
-  display: block;
-  margin-bottom: 10px;
-  width: 100%;
-  height: 40px;
-  background-size: cover;
-  background-position: center; }
-
-.message_image .left {
-  text-align: left;
-}
-.message_image .right {
-  text-align: right;
-}
-    
-.message_date {
-  font-size: 10px;
-  color: #ccc;
-  text-align: right; }
-
-.room-form {
-  margin: 20px 0;
-  text-align: center; }
-
+/** index end ------------------------------- **/
+/* session start */
 .login-user {
   position: fixed;
   bottom: 0;
@@ -149,44 +129,10 @@ input:-webkit-autofill, textarea:-webkit-autofill {
   padding: 5px;
   font-size: 12px;
   border: 1px #ccc solid;
-  background-color: #fff; }
-
-.input {
-  display: inline-block;
-  padding: 10px;
-  font-size: 12px;
-  vertical-align: middle;
-  border: 1px #ccc solid;
-  background-color: #fff; }
-
-.file-wrap {
-  position: relative;
-  padding: 10px 30px;
-  margin: 4px auto 0;
-  width: 200px;
-  overflow: hidden;
-  line-height: 1;
-  font-size: 14px;
-  font-weight: bold;
-  color: #fff;
-  text-align: center;
-  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-  vertical-align: middle;
-  border-radius: 5px;
-  background-color: #008b8b;
-  box-sizing: border-box; }
-
-.file {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0; }
-
-.label {
-  width: 100px; }
-
+  background-color: #fff; 
+}
+/* session end */
+/* button start */
 button {
   display:inline-block;
     
@@ -228,3 +174,100 @@ button:hover{
   border: 1px #ccc solid;
   background-color: #fff;
   -webkit-appearance: none; }
+/* button end */
+
+/* chat start */
+.line-bc {
+  padding: 5px 10px;
+  max-width: 100%;
+  margin: 15px auto;
+  text-align: right;
+  font-size: 18px;
+  background: #7da4cd;
+  height: 80%;
+  overflow-y: scroll;;
+}
+
+/*以下、②左側のコメント*/
+.balloon6 {
+  width: 100%;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.balloon6 .faceicon {
+  float: left;
+  margin-right: -50px;
+  width: 40px;
+}
+
+.balloon6 .faceicon img{
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}
+.balloon6 .chatting {
+  width: 100%;
+  text-align: left;
+}
+.says {
+  display: inline-block;
+  position: relative; 
+  margin: 0 0 0 50px;
+  padding: 10px;
+  max-width: 250px;
+  border-radius: 12px;
+  background: #edf1ee;
+}
+
+.says:after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 3px; 
+  left: -19px;
+  border: 8px solid transparent;
+  border-right: 18px solid #edf1ee;
+  -ms-transform: rotate(35deg);
+  -webkit-transform: rotate(35deg);
+  transform: rotate(35deg);
+}
+.says p {
+  margin: 0;
+  padding: 0;
+}
+
+/*以下、③右側の緑コメント*/
+.mycomment {
+  margin: 10px 0;
+}
+.mycomment p {
+  display: inline-block;
+  position: relative; 
+  margin: 0 10px 0 0;
+  padding: 8px;
+  max-width: 250px;
+  border-radius: 12px;
+  background: #30e852;
+  font-size: 15px:
+}
+
+.mycomment p:after {
+  content: "";
+  position: absolute;
+  top: 3px; 
+  right: -19px;
+  border: 8px solid transparent;
+  border-left: 18px solid #30e852;
+  -ms-transform: rotate(-35deg);
+  -webkit-transform: rotate(-35deg);
+  transform: rotate(-35deg);
+}
+/* chat end */
+.faceicon label {
+    font-size: 70%;
+}
+.box {
+    display: inline-block;
+    text-align: center;
+}

@@ -1,0 +1,107 @@
+<script type="text/javascript">
+$('#image_file').change(function(){
+  if (this.files.length > 0) {
+    var file = this.files[0];    
+    var reader = new FileReader();
+    reader.readAsDataURL(file);  
+    reader.onload = function() {
+      $('#thumbnail').attr('src', reader.result );
+    }
+  }
+});
+
+var socket = io();
+
+// 送信
+function post(){
+  var message = $('#message').val();
+//  var reader = new FileReader();
+//  reader.readAsDataURL($('#image_file').val());
+    
+  socket.emit('room_id', {value: <%= room.id %>},
+//              'image_file', {value: reader.result},
+//              'icon', {value: icon},
+              'message', { value: $('#message').val() });
+
+  $('#message').val('');
+  $('#image_file').val('');
+
+  return false;
+}
+
+
+// 受信
+socket.on('chat message', function(madetime, name, nickname, file, msg){
+  var li = $('<li class="main-list_item">');
+  var div = $('<div class="post_item">')
+    
+  div.append($('<p class="post_date">').text(madetime));
+  div.append($('<p class="post_user">').text(nickname + '(' + name + ')'));
+  div.append($('<p class="post_date">').text(msg));
+  if (isstamp == 1) {
+    img = $('<img width="60" height="60">');
+    img.attr('src', "/images/uploads/"+file);
+    div.append($('<p class="post_image">')).append(img);        
+  }
+  div.append($('<p class="post_message">').text(msg));
+  $('.main-list').append(li.append(div));
+});
+
+function DisConnect() {
+  var msg = socket.socket.transport.sessid + "は切断しました。";
+  socket.emit('message', { value: msg });
+  socket.disconnect();
+}
+    
+</script>
+
+    <% layout('layout') %>
+    <% if (postList.length) { %>
+        <div class="white-bg scroll">
+            <ul class="main-list">
+                <% postList.forEach(function(post) { %>
+                    <li class="main-list_item">
+                        <div class="post_item">
+                        <p class="post_date"><%= post._madetime %></p>
+                          <% if (user.id == post.user_id) { %>
+                            <p class="post_icon left"><img width="45" height="45" src="/images/uploads/<%= post.user_icon %>"/></p>
+                            <p class="post_user"><%= post.user_nickname %>(<%= post.user_name %>)</p>
+                            <% if (post.isstamp==1) { %>
+                              <p class="post_image"><img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/></p>
+                            <% } %>
+                            <p class="post_message"><%= post.post_message %></p>
+                          <% } else { %>
+                            <p class="post_icon right"><img width="45" height="45" src="/images/uploads/<%= post.user_icon %>"/></p>
+                            <p class="post_user"><%= post.user_nickname %>(<%= post.user_name %>)</p>
+                            <% if (post.isstamp==1) { %>
+                              <p class="post_image"><img width="60" height="60" src="/images/uploads/<%= post.message_file %>"/></p>
+                            <% } %>
+                            <p class="post_message"><%= post.post_message %></p>
+                          <% } %>
+
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+        </div>
+    <% } %>
+
+    <form action="" enctype="multipart/form-data" class="room-form">
+        <input type="text" id="message" name="message" class="input" autocomplete="off" />
+        <button onclick="post()">投稿</button>
+
+        <br>    
+        <button class="file-wrap">
+            <span class="label">画像<input type="file" id="image_file" name="image_file" class="file"></span>
+        </button>
+        <br>
+        <br>
+        <br>
+        <p><img id="thumbnail" src=""/></p>
+    </form>
+
+    <a href="/" class="btn"><button>トップへもどる</button></a>
+    <% if (typeof user !== 'undefined') { %>
+      <span class="login-user"><%= user.name %>さんとしてログインしています</span>
+    <% } %>
+

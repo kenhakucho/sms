@@ -12,12 +12,13 @@
           <% roomList.forEach(function(room) { %>
             <li class="main-list_item">
               <div class="post_item">
-                <p class="post_icon"><%= room.room_icon %></p>
-                <p class="post_name"><a href="/room/<%= room.room_id %>"><%= room.room_name %></a></p>
+                <a href="/room/<%= room.room_id %>"><%= room.room_name %>
+                  <p class="post_icon"><%= room.room_icon %></p>
+                  <p class="post_name"></p>
+                </a>
               </div>
             </li>
            <% }); %>
           </ul>
         </div>
-        <span class="login-user"><%= user.name %>さんとしてログインしています</span>
       <% } %>

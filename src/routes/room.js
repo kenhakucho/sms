@@ -42,16 +42,17 @@ router.get('/:room_id', function(req, res, next) {
 
 // 投稿
 router.post('/:room_id', upload.single('image_file'), function(req, res, next) {
+  console.log("POST room ---------------------------------------------");
   console.log("POST room/:room_id")
   console.log("image_file : " + req.image_file);
-  console.log("message    : " + req.message);
+  console.log("message    : " + req.body.message);
     
   var userId  = req.session.user_id? req.session.user_id: -1;
   var roomId  = req.params.room_id;
   var message = req.body.message;
   var isStamp = 0;
   var file    = '';
-  if (req.file) {
+  if (req.image_file) {
     isStamp = 1;
     file    = req.image_file.name;      
   } 

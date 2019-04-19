@@ -41,6 +41,7 @@ router.get('/:room_id', function(req, res, next) {
 });
 
 // 投稿
+/**
 router.post('/:room_id', upload.single('image_file'), function(req, res, next) {
   console.log("POST room ---------------------------------------------");
   console.log("POST room/:room_id")
@@ -84,7 +85,7 @@ router.post('/:room_id', upload.single('image_file'), function(req, res, next) {
     });
   }
 });
-
+**/
 module.exports = router;
 
 

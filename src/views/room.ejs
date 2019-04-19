@@ -31,33 +31,79 @@
         <% }); %>          
     </div>
         
-    <form enctype="multipart/form-data" method="post">
-      <input id="m" autocomplete="off" /><button>投稿</button>
+    <form action="" enctype="multipart/form-data">
+      <input id="msg" autocomplete="off" /><input id="img" type="file" name="image_file" accept="image/*"><button>投稿</button>
       <br>
-      <input type="file" name="image_file" accept="image/*">
-      <button class="btn btn-primary" id="upload">アップロード</button>
+      
+      <!-- <button class="btn btn-primary" id="upload">アップロード</button> -->
     </form>
     <canvas id="canvas" width="0" height="0"></canvas>
 
     <a href="/" class="btn"><button>トップへもどる</button></a>
 <script>
-
+  var roomId = <%= room.id %>;
+  var userId = <%= user.id %>;
+  var nickname = '<%= user.nickname %>';
+  var icon ='<%= user.icon %>';
   var socket = io();
+  socket.emit('join', {
+    room_id: roomId,
+    id: userId,
+    name: nickname
+  });
 
   $('form').submit(function(){
-    if () {
-         
-    } else {
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
+    var isStamp = 0;
+    if ($('#img').val() != '') {
+      isStamp = 1;
     }
+
+    socket.emit('chat message', {
+      room_id: roomId,
+      id: userId,
+      isStamp: isStamp, 
+      msg:  $('#msg').val(),
+      image: $('#img').val(),
+      icon: icon
+    });
+    $('#img').val('');
+    $('#msg').val('');
     return false;
   });
 
-  socket.on('chat message', function(msg){
-    $('#messages').append($('<li>').text(msg));
-  });
+  socket.on('chat message', function(post){
+    console.log("chat message receive!!");
 
+    if (userId == post.id) {
+       var wrap = $('<div class="mycomment">');
+       var cur = $('<div class="faceicon">');
+       var span = $('<span>');
+       span.text(post.msg);
+       var msg = $('<p>');
+       msg.append(span);
+       console.log("post.isStamp : " + post.isStamp);
+       if (post.isStamp==1) {
+           msg.append($('<img width="60" height="60" src="/images/uploads/'+post.image+'"/>'));
+       }
+                        
+       var box = $('<div class="box">').append($('<img width="60" height="60" src="/images/uploads/'+post.icon+'"/><br><span>'+post.nickname+'</span>'));
+
+       cur.append(msg);
+       cur.append(box);
+       $('.line-bc').append(wrap).append(cur); 
+    } else {
+        var wrap =$('<div class="balloon6">'); 
+        var cur1 = $('<div class="faceicon">');
+        cur1.append($('<img width="60" height="60" src="/images/uploads/'+post.icon+'"/>'));
+        var cur2 = $('<div class="chatting">');
+        var cur3msg = $('<div class="says">');
+        cur3msg.text(post.msg);
+        cur2.append(cur3msg);
+        $('.line-bc').append(wrap).append(cur1).append(cur2);          
+    }
+      
+  });    
+    
 $(function() {
   var file = null; // 選択されるファイル
   var blob = null; // 画像(BLOBデータ)
@@ -123,7 +169,7 @@ $(function() {
 
 
   // アップロード開始ボタンがクリックされたら
-  $('#upload').click(function(){
+  $('#msg').click(function(){
 
     // ファイルが指定されていなければ何も起こらない
     if(!file || !blob) {
@@ -134,7 +180,7 @@ $(function() {
     fd.append('file', blob); // ファイルを添付する
 
     $.ajax({
-      url: "http://exapmle.com", // 送信先
+      url: "http://localhost:3000", // 送信先
       type: 'POST',
       dataType: 'json',
       data: fd,

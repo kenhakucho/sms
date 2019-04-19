@@ -2,6 +2,7 @@ var app = require('./app');
 var http = require('http').Server(app);
 var socketio = require('socket.io')(http);
 var connection = require('./mysqlConnection');
+var moment = require('moment');
 
 function ws() {
   var server = app.listen(app.get('port'), function() {
@@ -26,17 +27,17 @@ function ws() {
   
     socket.on('chat message', function(post) {
       console.log('chat message');
-      console.log("room_id : " + store[post.id].room_id);
-      console.log("chat message : " + post.msg);
+  //    console.log("moment() : " + moment().format('YYYY-MM-DD HH:mm:ss'));
       
       if (post.msg != "" || post.isStamp == 1) {
         connection.query('INSERT INTO post SET ?', {
-          room_id: post.room_id,
-          user_id: post.id,
-          isstamp: post.isStamp,
-          message: post.image,
-          file: post.image
+          'room_id': post.room_id,
+          'user_id': post.id,
+          'isstamp': post.isStamp,
+          'message': post.msg,
+          'file': post.image
         });
+        post.made = moment().format('HH:mm');         
         io.to(store[post.id].room_id).emit('chat message', post);
       }
     });

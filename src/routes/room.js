@@ -24,10 +24,13 @@ router.get('/:room_id', function(req, res, next) {
         }
     
         connection.query(postQuery, roomId, function(err, results) {
-          res.render('room', {
-            title: room[0].name,
-            room: room[0],
-            postList: results
+          connection.query('SELECT * FROM stamp WHERE enable=1', function(err, stamp) {
+            res.render('room', {
+              title: room[0].name,
+              room: room[0],
+              postList: results,
+              stampList: stamp
+            });
           });
         });
       });

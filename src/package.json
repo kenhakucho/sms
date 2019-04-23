@@ -21,6 +21,7 @@
     "node-sass": "^4.11.0",
     "sass": "^1.18.0",
     "socket.io": "^2.2.0",
+    "socketio-file-upload": "^0.7.0",
     "websocket": "^1.0.28"
   },
   "devDependencies": {

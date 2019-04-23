@@ -1,29 +1,31 @@
 var express = require('express');
 var router = express.Router();
-var multer = require('multer');
 var connection = require('../mysqlConnection');
-var upload = multer({ dest: './public/images/uploads/' });
+var multer = require('multer');
+var upload = multer({ dest: './public/images/icon/'});
+var app = express();
+var conf = require('../config.json')[app.get('env')];
 
 router.get('/', function(req, res, next) {
   console.log("GET signup/")
   res.render('signup', {
     title: '新規会員登録',
-    image: '/images/uploads/default_icon.png'
+    image: '/images/icon/' + conf.usericon
   });
 });
 
-router.post('/', upload.single('image_file'), function(req, res, next) {
+router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, next) {
   console.log("POST signup/")
-  console.log("uploads  : " + req.image_file);
+  console.log(req.files);
     
   var name     = req.body.user_name;
   var nickname = req.body.nickname;
   var mail     = req.body.email;
   var password = req.body.password;
-  var icon     = 'default_icon.png'
-      
-  if (req.image_file) {
-      icon = req.image_file.name;
+  var icon     = conf.usericon;
+ 
+  if (req.files.image_file) {
+      icon = req.files.image_file[0].filename;
   }  
     
   console.log("name     : " + name);
@@ -38,7 +40,7 @@ router.post('/', upload.single('image_file'), function(req, res, next) {
       res.render('signup', {
         title: '新規会員登録',
         emailExists: '既に登録されているメールアドレスです',
-        image: '/images/uploads/'+icon
+        image: '/images/icon/'+icon
       });
     } else {
       connection.query('INSERT INTO user SET ?', 

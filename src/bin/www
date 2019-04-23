@@ -8,8 +8,11 @@ var app = require('../app');
 var debug = require('debug')('sms:server');
 var http = require('http');
 var ws = require('../ws');
+var conf = require('../config.json')[app.get('env')];
 
-app.set('port', process.env.PORT || 3000);
+console.log("app mode : " + app.get('env'));
+
+app.set('port', process.env.PORT || conf.port);
 ws();
 
 /**

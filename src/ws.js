@@ -3,6 +3,7 @@ var http = require('http').Server(app);
 var socketio = require('socket.io')(http);
 var connection = require('./mysqlConnection');
 var moment = require('moment');
+var fs = require('fs');
 
 function ws() {
   var server = app.listen(app.get('port'), function() {
@@ -13,6 +14,7 @@ function ws() {
   var store = {};
 
   io.on('connection', function (socket) {
+  
     socket.on('join', function(post) {
       console.log('chat join');
       usrobj = {
@@ -27,18 +29,38 @@ function ws() {
   
     socket.on('chat message', function(post) {
       console.log('chat message');
-  //    console.log("moment() : " + moment().format('YYYY-MM-DD HH:mm:ss'));
-      
-      if (post.msg != "" || post.isStamp == 1) {
+           
+      if (post.msg != "" || post.type == 1) {
         connection.query('INSERT INTO post SET ?', {
           'room_id': post.room_id,
           'user_id': post.id,
-          'isstamp': post.isStamp,
+          'type': post.type,
           'message': post.msg,
           'file': post.image
         });
         post.made = moment().format('HH:mm');         
         io.to(store[post.id].room_id).emit('chat message', post);
+      } else if (post.type == 2) {
+        
+        var writeFile = post.data.file;
+        var filename = require('crypto').randomBytes(8).toString('hex');
+        var writePath = './public/images/uploads/'+filename;
+
+        var writeStream = fs.createWriteStream(writePath);
+
+        writeStream.on('drain', function(){
+          }).on('error', function (exception) {
+            console.log("exception:"+exception);
+          }).on('close', function () {
+            connection.query('INSERT INTO post SET ?', {
+              'room_id': post.room_id,
+              'user_id': post.id,
+              'type': post.type,
+              'file': filename
+            });
+          }).on('pipe', function (src) {}); 
+        writeStream.write(writeFile,'binary');
+        writeStream.end();          
       }
     });
 

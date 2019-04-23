@@ -13,6 +13,7 @@
 <div class="wrapper">
     <%- body %>
     <% if (typeof user !== 'undefined') { %>
+      <a href="/" class="btn"><button>トップ画面</button></a>
       <a href="/logout" class="btn"><button>ログアウト</button></a>
     <% } else { %>
       <a href="/signup" class="btn"><button>会員登録</button></a>
@@ -28,3 +29,16 @@
 </body>
 </html>
 
+<script>
+  $('#upfile').change(function(){
+    if (this.files.length > 0) {
+    var file = this.files[0];    
+    var reader = new FileReader();
+    reader.readAsDataURL(file);
+    
+    reader.onload = function() {
+      $('#thumbnail').attr('src', reader.result );
+    }
+  }
+});
+</script>

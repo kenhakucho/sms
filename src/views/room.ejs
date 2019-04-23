@@ -1,4 +1,5 @@
       <% layout('layout') %>
+      <div class="tail">
       <div class="line-bc">
         <% postList.forEach(function(post) { %>
 
@@ -7,14 +8,16 @@
               <div class="faceicon">
                 <label><%= post._madetime %></label>
                 <p><span>
-                    <% if (post.post_isstamp==1) { %>
+                    <% if (post.post_type==1) { %>
+                      <img width="60" height="60" src="/images/stamp/<%= post.post_file %>"/>
+                    <% } else if (post.post_type==2) { %>
                       <img width="60" height="60" src="/images/uploads/<%= post.post_file %>"/>
                     <% } else { %>
                       <%= post.post_message %>
                     <% } %>
                    </span>
                    <div class="box">
-                     <img width="60" height="60" src="/images/uploads/<%= post.user_icon %>"/><br>
+                     <img width="60" height="60" src="/images/icon/<%= post.user_icon %>"/><br>
                      <span><%= post.user_nickname %></span>
                    </div>
               </div>
@@ -22,11 +25,13 @@
           <% } else { %>
             <div class="balloon6">      
               <div class="faceicon">
-                <img width="60" height="60" src="/images/uploads/<%= post.user_icon %>"/>
+                <img width="60" height="60" src="/images/icon/<%= post.user_icon %>"/>
               </div>
               <div class="chatting">
                 <div class="says">
-                    <% if (post.post_isstamp==1) { %>
+                    <% if (post.post_type==1) { %>
+                      <img width="60" height="60" src="/images/stamp/<%= post.post_file %>"/>
+                    <%  } else if (post.post_type==2) { %>
                       <img width="60" height="60" src="/images/uploads/<%= post.post_file %>"/>
                     <% } else { %>
                       <%= post.post_message %>
@@ -38,24 +43,58 @@
     </div>
         
     <form action="" enctype="multipart/form-data">
-      <input id="msg" autocomplete="off" /><input id="img" type="file" name="image_file" accept="image/*"><button>投稿</button>
-      <canvas id="canvas" width="0" height="0"></canvas>
-      <br>
-      <% stampList.forEach(function(stamp) { %>
-        <button onclick="stampMsg('<%= stamp.file %>')">
-          <img src="/images/uploads/<%= stamp.file %>"  width="50" height="50"/>
-        </button>
-      <% }); %>
-      <!-- <button class="btn btn-primary" id="upload">アップロード</button> -->
+      <div class="container line-msg">
+        <div class="item_list msg">
+          <% stampList.forEach(function(stamp) { %>
+          <button onclick="stampMsg('<%= stamp.file %>')">
+            <img src="/images/stamp/<%= stamp.file %>"  width="50" height="50"/>
+          </button>
+          <% }); %>
+        </div>  
+        <div class="item_list">
+          <textarea id="msg" maxlength="255" rows="4"></textarea>
+          <button class="msg">投稿</button>
+        </div>
+        <input class="msg" id="img" type="file" name="image_file" accept="image/*" ><br>
+        <!-- <canvas class="msg" id="canvas"></canvas> -->
+      </div>
     </form>
-
-    <a href="/" class="btn"><button>トップへもどる</button></a>
+    </div>
 <script>
   var roomId = <%= room.id %>;
   var userId = <%= user.id %>;
   var nickname = '<%= user.nickname %>';
   var icon ='<%= user.icon %>';
   var socket = io();
+  const stpath = "/images/stamp/";
+  const icpath = "/images/icon/";
+  const uppath = "/images/uploads/";
+
+$("#img").change(function(event){
+  var send_file = event.target.files[0];
+  var fileReader = new FileReader();
+  var data = {};
+
+  fileReader.readAsBinaryString(send_file);
+  fileReader.onload = function(event) {
+    data.file = event.target.result;
+    data.name = "uploadFile";
+
+    socket.emit('chat message', {
+      'room_id': roomId,
+      'id': userId,
+      'nickname': nickname,
+      'type': '2', 
+      'msg':  '',
+      'image': '',
+      'icon': icon,
+      'data': data
+    });
+    msgClear();
+    return false;
+  }
+});
+    
   socket.emit('join', {
     room_id: roomId,
     id: userId,
@@ -63,22 +102,16 @@
   });
 
   $('form').submit(function(){
-    var isStamp = 0;
-    if ($('#img').val() != '') {
-      isStamp = 1;
-    }
-
     socket.emit('chat message', {
       'room_id': roomId,
       'id': userId,
       'nickname': nickname,
-      'isStamp': isStamp, 
+      'type': '0', 
       'msg':  $('#msg').val(),
       'image': $('#img').val(),
       'icon': icon
     });
-    $('#img').val('');
-    $('#msg').val('');
+    msgClear();
     return false;
   });
     
@@ -87,14 +120,18 @@
       'room_id': roomId,
       'id': userId,
       'nickname': nickname,
-      'isStamp': '1', 
+      'type': '1', 
       'msg':  '',
       'image': img, 
       'icon': icon
     });
-    $('#img').val('');
-    $('#msg').val('');
+    msgClear();
     return false;
+  }
+
+  function msgClear() {
+    $('#img').val('');
+    $('#msg').val('');      
   }
     
   socket.on('chat message', function(post){
@@ -106,12 +143,12 @@
        var msg = $('<p>');
        var span = $('<span>');
        msg.append(span);
-       if (post.isStamp==1) {
-           span.append($('<img width="60" height="60" src="/images/uploads/'+post.image+'"/>'));
+       if (post.type==1) {
+           span.append($('<img width="60" height="60" src="'+ stpath + post.image+'"/>'));
        } else {
            span.text(post.msg);
        }                
-       var box = $('<div class="box">').append($('<img width="60" height="60" src="/images/uploads/'+post.icon+'"/><br><span>'+post.nickname+'</span>'));
+       var box = $('<div class="box">').append($('<img width="60" height="60" src="' + icpath + post.icon+'"/><br><span>'+post.nickname+'</span>'));
        cur.append($('<label>').text(post.made));
        cur.append(msg);
        cur.append(box);
@@ -120,11 +157,11 @@
     } else {
         var wrap =$('<div class="balloon6">'); 
         var cur1 = $('<div class="faceicon">');
-        cur1.append($('<img width="60" height="60" src="/images/uploads/'+post.icon+'"/>'));
+        cur1.append($('<img width="60" height="60" src="' + icpath + post.icon+'"/>'));
         var cur2 = $('<div class="chatting">');
         var cur2msg = $('<div class="says">');
-        if (post.isStamp==1) {
-            cur2msg.append($('<img width="60" height="60" src="/images/uploads/'+post.image+'"/>'));
+        if (post.type==1) {
+            cur2msg.append($('<img width="60" height="60" src="' + stpath + post.image+'"/>'));
         } else {
             span.text(post.msg);
             cur2msg.append(span);
@@ -134,102 +171,11 @@
         wrap.append(cur1).append(cur2);
         $('.line-bc').append(wrap);          
     }
-      
+    
+    $('.line-bc').get(0).scrollTop = $('.line-bc').get(0).scrollHeight;
   });    
     
-$(function() {
-  var file = null; // 選択されるファイル
-  var blob = null; // 画像(BLOBデータ)
-  const THUMBNAIL_WIDTH = 500; // 画像リサイズ後の横の長さの最大値
-  const THUMBNAIL_HEIGHT = 500; // 画像リサイズ後の縦の長さの最大値
-
-  // ファイルが選択されたら
-  $('input[type=file]').change(function() {
-    // ファイルを取得
-    file = $(this).prop('files')[0];
-    if (file.type != 'image/jpeg' && file.type != 'image/png') {
-      file = null;
-      blob = null;
-      return;
-    }
-
-    // リサイズ
-    var image = new Image();
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      image.onload = function() {
-        var width, height;
-        if(image.width > image.height){
-          // 横長の画像は横のサイズを指定値
-          var ratio = image.height/image.width;
-          width = THUMBNAIL_WIDTH;
-          height = THUMBNAIL_WIDTH * ratio;
-        } else {
-          // 縦長の画像は縦のサイズを指定値
-          var ratio = image.width/image.height;
-          width = THUMBNAIL_HEIGHT * ratio;
-          height = THUMBNAIL_HEIGHT;
-        }
-        // サムネ描画用canvasのサイズを上で算出した値に変更
-        var canvas = $('#canvas')
-                     .attr('width', width)
-                     .attr('height', height);
-        var ctx = canvas[0].getContext('2d');
-        // canvasに既に描画されている画像をクリア
-        ctx.clearRect(0,0,width,height);
-        // canvasにサムネイルを描画
-        ctx.drawImage(image,0,0,image.width,image.height,0,0,width,height);
-
-        // canvasからbase64画像データを取得
-        var base64 = canvas.get(0).toDataURL('image/jpeg');        
-        // base64からBlobデータを作成
-        var barr, bin, i, len;
-        bin = atob(base64.split('base64,')[1]);
-        len = bin.length;
-        barr = new Uint8Array(len);
-        i = 0;
-        while (i < len) {
-          barr[i] = bin.charCodeAt(i);
-          i++;
-        }
-        blob = new Blob([barr], {type: 'image/jpeg'});
-        console.log(blob);
-      }
-      image.src = e.target.result;
-    }
-    reader.readAsDataURL(file);
-  });
-
-
-  // アップロード開始ボタンがクリックされたら
-  $('#msg').click(function(){
-
-    // ファイルが指定されていなければ何も起こらない
-    if(!file || !blob) {
-      return;
-    }
-
-    var name, fd = new FormData();
-    fd.append('file', blob); // ファイルを添付する
-
-    $.ajax({
-      url: "http://localhost:3000", // 送信先
-      type: 'POST',
-      dataType: 'json',
-      data: fd,
-      processData: false,
-      contentType: false
-    })
-    .done(function( data, textStatus, jqXHR ) {
-      // 送信成功
-    })
-    .fail(function( jqXHR, textStatus, errorThrown ) {
-      // 送信失敗
-    });  
-
-  });
-
-});
+$('.line-bc').get(0).scrollTop = $('.line-bc').get(0).scrollHeight;
 </script>
 
 

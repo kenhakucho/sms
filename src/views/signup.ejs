@@ -1,5 +1,5 @@
     <% layout('layout') %>
-    <form action="/signup" method="post" enctype="multipart/form-data" class="room-form">
+    <form action="/signup" method="post" enctype="multipart/form-data" class="form">
         <p><img id="thumbnail" width="100" height="100" src="<%= image %>"/></p>
         <br>
         <button class="file-wrap">
@@ -36,16 +36,3 @@
     <% } %>
 <a href="/" class="btn"><button>トップへもどる</button></a>
 
-<script>
-  $('#upfile').change(function(){
-    if (this.files.length > 0) {
-    var file = this.files[0];    
-    var reader = new FileReader();
-    reader.readAsDataURL(file);
-    
-    reader.onload = function() {
-      $('#thumbnail').attr('src', reader.result );
-    }
-  }
-});
-</script>

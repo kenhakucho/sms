@@ -1,24 +1,67 @@
       <% layout('layout') %>
       <% if (typeof user !== 'undefined') { %>
-
-        <form action="/" method="post" class="room-form">
-          ルーム名: <input type="text" name="title" class="input" required><br>
-          <br>
-          <button type="submit" class="submit">ルーム作成</button>
-          <br>
-        </form>
-        <div class="white-bg scroll">
-          <ul class="main-list">
+      <div class="tail">
+      <div class="white-bg">
+　      <label>ルーム一覧</label>
+        <ul class="main-list image_list">
           <% roomList.forEach(function(room) { %>
             <li class="main-list_item">
-              <div class="post_item">
-                <a href="/room/<%= room.room_id %>"><%= room.room_name %>
-                  <p class="post_icon"><%= room.room_icon %></p>
-                  <p class="post_name"></p>
+              <div class="caption_box post_item">
+                <h1 class="caption"><%= room.room_name %></h1>
+                <a href="/room/<%= room.room_id %>">
+                <div class="image_box">
+                  <% if (room.room_icon == undefined) { %>
+                    <img class="post_icon" src="/images/icon/default_room_icon.png" width="60%" height="auto" />
+                  <% } else { %>
+                    <img class="post_icon" src="/images/icon/<%=  room.room_icon %>" width="60%" height="auto" />
+                  <% } %>
+                </div>
                 </a>
               </div>
+                
             </li>
-           <% }); %>
-          </ul>
+          <% }); %>
+        </ul>
+      </div>
+      <div class="white-bg">
+        <form action="/" method="post" class="form-index" enctype="multipart/form-data">
+            
+  　      <p>ルーム作成</p>
+          <div class="cp_iptxt left-form">
+            <input class="ef" width="80%" type="text" placeholder="" name="room_name" required>
+            <label>ルーム名</label>
+            <span class="focus_line"><i></i></span>
+          </div>
+          <button class="file-wrap">
+            <label>アイコン変更<img id="thumbnail" width="7%" 
+                 src="/images/icon/<%= roomIcon %>" />
+            </label>
+            <input type="file" id="upfile" name="image_file" class="file">
+          </button>
+          <br/>
+          <label>メンバー選択</label>
+          <br/>
+            <div class="white-pt">
+              <div class="image_list">
+              <% userList.forEach(function(friend) { %>
+                <% if (user.id === friend.id) { %>
+                  <input type="hidden" name="addMember" value="<%= friend.id %>">
+                <% } else { %>
+                <div class="image_board">
+                  <div class="image_box">
+                      <img class="thumbnail" src="/images/icon/<%= friend.icon %>" alt="<%= friend.name %>" />
+                      <input class="disabled_checkbox" type="checkbox" name="addMember" value="<%= friend.id %>"/>
+                  <label><%= friend.nickname %></label>
+                  </div>
+                </div>
+                <% } %>
+              <% }); %>
+             </div>
+           </div>
+           <br>
+           <button type="submit" class="submit clearboth">ルーム作成</button>
+           <br>
+          </form>
         </div>
+      </div>
       <% } %>

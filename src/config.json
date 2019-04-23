@@ -1,0 +1,16 @@
+{
+"development": {
+    "site": "chat room",
+    "url": "http://localhost:3000/",
+    "port": "3000",
+    "usericon": "default_icon.png",
+    "roomicon": "default_room_icon.png"    
+},
+"production": {
+    "site": "chat room",
+    "url": "http://dim5.net/",
+    "port": "3000",
+    "usericon": "default_icon.png",
+    "roomicon": "default_room_icon.png"    
+}
+}

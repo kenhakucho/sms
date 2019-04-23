@@ -30,6 +30,7 @@ RUN npm install --save multer          # mkdir -p ./public/images/uploads
 RUN npm install sass --save
 RUN npm install node-sass
 RUN npm i --save socket.io
+RUN npm install --save socketio-file-upload
 
 EXPOSE 3000
 EXPOSE 13000

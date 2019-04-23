@@ -13,6 +13,8 @@ var roomRouter = require('./routes/room');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 
+var edit = require('./routes/edit');
+
 var setUser = require('./setUser'); 
 var app = express();
 
@@ -38,6 +40,7 @@ app.use('/signup', signupRouter);
 app.use('/room', setUser, roomRouter);
 app.use('/login', login); 
 app.use('/logout', logout); 
+app.use('/edit', edit); 
 
 /**
 app.get('/test', function(req, res){

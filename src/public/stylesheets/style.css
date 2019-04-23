@@ -145,6 +145,7 @@ input[type="file"] {
 
 .main-list {
   display: flex; 
+  overflow-x: scroll;
 }
 /** index start ------------------------------- **/
 .post_item {

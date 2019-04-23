@@ -41,7 +41,8 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
   var roomName  = req.body.room_name;
   var createdAt = moment().format('YYYY-MM-DD HH:mm:ss');
   var icon      = conf.roomicon;
-      
+  var member    = req.body.addMember;
+
   if (req.files.image_file) {
       icon = req.files.image_file[0].filename;
   }  
@@ -59,7 +60,19 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
       console.log("INSERT INTO room OK"); 
 
       var room_id = result.insertId;
-      connection.query('INSERT INTO member SET room_id=?, user_id=?',[room_id, userId], function(err, result) {
+      var insertMemQuery = 'INSERT INTO member(room_id, user_id) VALUES ?';
+      var values = [];
+    
+      member.forEach(function(memberid){
+          values.push([room_id, Number(memberid)]);
+      });
+        
+      console.log("values");
+      console.log(values);
+
+      connection.query(insertMemQuery, [values], function(err, result) {
+           
+        
         if (err) { 
           connection.rollback(function() {
             console.log("INSERT INTO member NG"); 

@@ -9,15 +9,15 @@
                 <label><%= post._madetime %></label>
                 <p><span>
                     <% if (post.post_type==1) { %>
-                      <img width="60" height="60" src="/images/stamp/<%= post.post_file %>"/>
+                      <img class="thumb_r" src="/images/stamp/<%= post.post_file %>"/>
                     <% } else if (post.post_type==2) { %>
-                      <img width="60" height="60" src="/images/uploads/<%= post.post_file %>"/>
+                      <img class="thumb_r" src="/images/uploads/<%= post.post_file %>"/>
                     <% } else { %>
                       <%= post.post_message %>
                     <% } %>
                    </span>
                    <div class="box">
-                     <img width="60" height="60" src="/images/icon/<%= post.user_icon %>"/><br>
+                     <img class="thumb_r" src="/images/icon/<%= post.user_icon %>"/><br>
                      <span><%= post.user_nickname %></span>
                    </div>
               </div>
@@ -25,19 +25,21 @@
           <% } else { %>
             <div class="balloon6">      
               <div class="faceicon">
-                <img width="60" height="60" src="/images/icon/<%= post.user_icon %>"/>
+                <img class="thumb_r" src="/images/icon/<%= post.user_icon %>" />
               </div>
               <div class="chatting">
                 <div class="says">
                     <% if (post.post_type==1) { %>
-                      <img width="60" height="60" src="/images/stamp/<%= post.post_file %>"/>
+                      <img class="thumb_r" src="/images/stamp/<%= post.post_file %>" />
                     <%  } else if (post.post_type==2) { %>
-                      <img width="60" height="60" src="/images/uploads/<%= post.post_file %>"/>
+                      <img class="thumb_r" src="/images/uploads/<%= post.post_file %>" />
                     <% } else { %>
                       <%= post.post_message %>
                     <% } %>
                 </div>
+              <label><%= post._madetime %></label>
               </div>                
+            </div>                
           <% } %>
         <% }); %>          
     </div>
@@ -47,7 +49,7 @@
         <div class="item_list msg">
           <% stampList.forEach(function(stamp) { %>
           <button onclick="stampMsg('<%= stamp.file %>')">
-            <img src="/images/stamp/<%= stamp.file %>"  width="50" height="50"/>
+            <img class="thumb_s" src="/images/stamp/<%= stamp.file %>" />
           </button>
           <% }); %>
         </div>  
@@ -141,15 +143,16 @@ $("#img").change(function(event){
        var wrap = $('<div class="mycomment">');
        var cur = $('<div class="faceicon">');
        var msg = $('<p>');
-       var span = $('<span>');
-       msg.append(span);
        if (post.type==1) {
-           span.append($('<img width="60" height="60" src="'+ stpath + post.image+'"/>'));
+           msg.append($('<span><img width="60" height="60" src="'+ stpath + post.image+'"/></span>'));
        } else {
-           span.text(post.msg);
+           msg.append('<span>'+post.msg+'</span>');
        }                
        var box = $('<div class="box">').append($('<img width="60" height="60" src="' + icpath + post.icon+'"/><br><span>'+post.nickname+'</span>'));
-       cur.append($('<label>').text(post.made));
+       
+       var made=$('<label>');
+       made.text(post.made+' ');
+       cur.append(made);
        cur.append(msg);
        cur.append(box);
        wrap.append(cur);
@@ -163,11 +166,14 @@ $("#img").change(function(event){
         if (post.type==1) {
             cur2msg.append($('<img width="60" height="60" src="' + stpath + post.image+'"/>'));
         } else {
-            span.text(post.msg);
-            cur2msg.append(span);
+            cur2msg.append('<span>'+post.msg+'</span>');
         } 
-        cur.append($('<label>').text(post.made));
         cur2.append(cur2msg);
+
+        var made=$('<label>');
+        made.text(' '+post.made);
+        cur2.append(made);
+
         wrap.append(cur1).append(cur2);
         $('.line-bc').append(wrap);          
     }

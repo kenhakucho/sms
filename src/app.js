@@ -15,6 +15,7 @@ var logout = require('./routes/logout');
 
 var edit = require('./routes/edit');
 
+var setUrl = require('./setUrl'); 
 var setUser = require('./setUser'); 
 var app = express();
 
@@ -35,12 +36,12 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-app.use('/', setUser, indexRouter);
-app.use('/signup', signupRouter);
-app.use('/room', setUser, roomRouter);
-app.use('/login', login); 
-app.use('/logout', logout); 
-app.use('/edit', edit); 
+app.use('/', setUrl, setUser, indexRouter);
+app.use('/signup', setUrl, signupRouter);
+app.use('/room', setUrl, setUser, roomRouter);
+app.use('/login', setUrl, login); 
+app.use('/logout', setUrl, logout); 
+app.use('/edit', setUrl, edit); 
 
 /**
 app.get('/test', function(req, res){

@@ -3,6 +3,7 @@
       <div class="tail">
       <div class="white-bg">
 　      <label>ルーム一覧</label>
+        <div class="white-pt">
         <ul class="main-list image_list">
           <% roomList.forEach(function(room) { %>
             <li class="main-list_item">
@@ -11,9 +12,9 @@
                 <a href="/room/<%= room.room_id %>">
                 <div class="image_box">
                   <% if (room.room_icon == undefined) { %>
-                    <img class="post_icon" src="/images/icon/default_room_icon.png" width="60%" height="auto" />
+                    <img class="thumb_s" src="/images/icon/default_room_icon.png" />
                   <% } else { %>
-                    <img class="post_icon" src="/images/icon/<%=  room.room_icon %>" width="60%" height="auto" />
+                    <img class="thumb_s" src="/images/icon/<%=  room.room_icon %>" />
                   <% } %>
                 </div>
                 </a>
@@ -22,20 +23,21 @@
             </li>
           <% }); %>
         </ul>
+        </div>
       </div>
       <div class="white-bg">
         <form action="/" method="post" class="form-index" enctype="multipart/form-data">
             
-  　      <p>ルーム作成</p>
+           <button type="submit" class="submit clearboth">ルーム作成</button>
+
           <div class="cp_iptxt left-form">
             <input class="ef" width="80%" type="text" placeholder="" name="room_name" required>
             <label>ルーム名</label>
             <span class="focus_line"><i></i></span>
           </div>
-          <button class="file-wrap">
-            <label>アイコン変更<img id="thumbnail" width="7%" 
-                 src="/images/icon/<%= roomIcon %>" />
-            </label>
+          <button>
+            <img id="thumbnail" class="thumb_s" src="/images/icon/<%= roomIcon %>" />
+            <label>アイコン</label>
             <input type="file" id="upfile" name="image_file" class="file">
           </button>
           <br/>
@@ -49,7 +51,7 @@
                 <% } else { %>
                 <div class="image_board">
                   <div class="image_box">
-                      <img class="thumbnail" src="/images/icon/<%= friend.icon %>" alt="<%= friend.name %>" />
+                      <img class="thumb_m" src="/images/icon/<%= friend.icon %>" alt="<%= friend.name %>" />
                       <input class="disabled_checkbox" type="checkbox" name="addMember" value="<%= friend.id %>"/>
                   <label><%= friend.nickname %></label>
                   </div>
@@ -58,8 +60,6 @@
               <% }); %>
              </div>
            </div>
-           <br>
-           <button type="submit" class="submit clearboth">ルーム作成</button>
            <br>
           </form>
         </div>

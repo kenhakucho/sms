@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
     sql: 'SELECT room.id, room.name, room.icon FROM member INNER JOIN room ON room.id=member.room_id AND room.enable=1 WHERE member.user_id=' + userId + ';', 
     nestTables: '_'
   };
-    
+  
   var userListQuery = 'SELECT * FROM user WHERE enable=1';
     
   connection.query(roomListQuery, function(err, roomList) {
@@ -62,10 +62,14 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
       var room_id = result.insertId;
       var insertMemQuery = 'INSERT INTO member(room_id, user_id) VALUES ?';
       var values = [];
-    
-      member.forEach(function(memberid){
+      
+      if (Array.isArray()) {
+        member.forEach(function(memberid){
           values.push([room_id, Number(memberid)]);
-      });
+        });
+      } else {
+          values.push([room_id, member);
+      }
         
       console.log("values");
       console.log(values);

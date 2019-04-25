@@ -5,6 +5,7 @@ var multer = require('multer');
 var upload = multer({ dest: './public/images/icon/'});
 var app = express();
 var conf = require('../config.json')[app.get('env')];
+var crypto = require("crypto");
 
 router.get('/', function(req, res, next) {
   console.log("GET signup/")
@@ -24,6 +25,10 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
   var password = req.body.password;
   var icon     = conf.usericon;
  
+  var sha512 = crypto.createHash('sha512');
+  sha512.update(password)
+  var hash = sha512.digest('hex')
+
   if (req.files.image_file) {
       icon = req.files.image_file[0].filename;
   }  
@@ -48,7 +53,7 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
         name: name,
         nickname: nickname,
         mail: mail,
-        password: password,
+        password: hash,
         icon: icon
       }, function(err, rows) {
         res.redirect('/login');

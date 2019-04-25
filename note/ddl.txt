@@ -43,8 +43,6 @@ PRIMARY KEY(room_id, user_id)
 ALTER TABLE member ADD INDEX member_index_01(room_id);
 ALTER TABLE member ADD INDEX member_index_02(user_id);
 
-CREATE PROCEDURE user_id()
-SELECT IFNULL(MAX(id)+1,0) FROM user;
 
 CREATE TABLE post(
 id int not null auto_increment, 

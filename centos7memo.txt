@@ -1,0 +1,5 @@
+ln -s `pwd`/nodemond.service /etc/systemd/system/nodemond.service
+ln -s `pwd`/nodemon_start.sh /opt/nodemon_start.sh
+
+echo fs.inotify.max_user_watches=582222 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+

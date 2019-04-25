@@ -1,0 +1,11 @@
+Description=NODE js Server
+Documentation=https://github.com/kenhakucho/sms/
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=always
+Type=simple
+ExecStart=/opt/nodemon_start.sh
+

@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../mysqlConnection');
+var crypto = require("crypto");
 
 router.get('/', function(req, res, next) {
   if (req.session.user_id) {
@@ -17,11 +18,15 @@ router.post('/', function(req, res, next) {
   var email = req.body.email;
   var password = req.body.password;
 
+  var sha512 = crypto.createHash('sha512');
+  sha512.update(password)
+  var hash = sha512.digest('hex')
+
   console.log("email    : " + email);
   console.log("password : " + password);
 
   connection.query('SELECT * FROM user WHERE mail = ? AND password = ? LIMIT 1', 
-                   [email, password], function(err, rows) {
+                   [email, hash], function(err, rows) {
     console.log("rows   : " + rows[0]);
     var enable = rows.length? rows[0].enable: false;
     console.log("enable : " + enable);

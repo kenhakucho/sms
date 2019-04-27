@@ -15,21 +15,20 @@ router.get('/', function(req, res, next) {
 
 router.post('/', function(req, res, next) {
   console.log("POST /login");
-  var email = req.body.email;
+  var mail = req.body.email;
   var password = req.body.password;
 
   var sha512 = crypto.createHash('sha512');
   sha512.update(password)
   var hash = sha512.digest('hex')
-
+/**
   console.log("email    : " + email);
   console.log("password : " + password);
-
-  connection.query('SELECT * FROM user WHERE mail = ? AND password = ? LIMIT 1', 
-                   [email, hash], function(err, rows) {
-    console.log("rows   : " + rows[0]);
+**/
+  connection.query('SELECT * FROM user WHERE mail=? AND password=? LIMIT 1', 
+    [mail, hash], 
+    function(err, rows) {
     var enable = rows.length? rows[0].enable: false;
-    console.log("enable : " + enable);
 
     if (enable) {
       req.session.user_id = rows[0].id;

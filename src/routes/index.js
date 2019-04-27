@@ -14,24 +14,23 @@ router.get('/', function(req, res, next) {
 
   // roomList
   var roomListQuery = {
-    sql: 'SELECT room.id, room.name, room.icon FROM member INNER JOIN room ON room.id=member.room_id AND room.enable=1 WHERE member.user_id=' + userId + ';', 
+    sql: 'SELECT room.id, room.name, room.icon FROM member INNER JOIN room ON room.id=member.room_id AND room.enable=1 WHERE member.user_id=?;', 
     nestTables: '_'
   };
-  
-  var userListQuery = 'SELECT * FROM user WHERE enable=1';
-    
-  connection.query(roomListQuery, function(err, roomList) {
-    // console.log(results);
+      
+  connection.query(roomListQuery, userId, 
+    function(err, roomList) {
     
     // userList
-    connection.query(userListQuery, function(err, userList) {
-      res.render('index', {
-        title: 'Aine',
-        roomList: roomList,
-        userList: userList,
-        userIcon: conf.usericon, 
-        roomIcon: conf.roomicon, 
-      });
+    connection.query('SELECT * FROM user WHERE enable=1', 
+      function(err, userList) {
+        res.render('index', {
+          title: 'Aine',
+          roomList: roomList,
+          userList: userList,
+          userIcon: conf.usericon, 
+          roomIcon: conf.roomicon, 
+        });
     });
   });
 });
@@ -50,25 +49,27 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
   connection.beginTransaction(function(err) {
     console.log("beginTransaction"); 
     if (err) { throw err; }
-    connection.query('INSERT INTO room SET user_id=?, name=?, icon=?',[userId, roomName, icon], function(err, result) {
-      if (err) { 
-        connection.rollback(function() {
-          console.log("INSERT INTO room NG"); 
-          throw err;
-        });
-      }
-      console.log("INSERT INTO room OK"); 
+    connection.query('INSERT INTO room SET user_id=?, name=?, icon=?',
+      [userId, roomName, icon], 
+      function(err, result) {
+        if (err) { 
+          connection.rollback(function() {
+            console.log("INSERT INTO room NG"); 
+            throw err;
+          });
+        }
+        console.log("INSERT INTO room OK"); 
 
-      var room_id = result.insertId;
-      var insertMemQuery = 'INSERT INTO member(room_id, user_id) VALUES ?';
+        var room_id = result.insertId;
+        var insertMemQuery = 'INSERT INTO member(room_id, user_id) VALUES ?';
       var values = [];
       
-      if (Array.isArray()) {
+      if (Array.isArray(member)) {
         member.forEach(function(memberid){
           values.push([room_id, Number(memberid)]);
         });
       } else {
-          values.push([room_id, member);
+          values.push([room_id, member]);
       }
         
       console.log("values");

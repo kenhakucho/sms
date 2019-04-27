@@ -13,7 +13,10 @@ var roomRouter = require('./routes/room');
 var login = require('./routes/login');
 var logout = require('./routes/logout');
 
-var edit = require('./routes/edit');
+var roomList = require('./routes/roomList');
+var roomEdit = require('./routes/roomEdit');
+var stamp = require('./routes/stamp');
+var profile = require('./routes/profile');
 
 var setUrl = require('./setUrl'); 
 var setUser = require('./setUser'); 
@@ -41,7 +44,12 @@ app.use('/signup', setUrl, signupRouter);
 app.use('/room', setUrl, setUser, roomRouter);
 app.use('/login', setUrl, login); 
 app.use('/logout', setUrl, logout); 
-app.use('/edit', setUrl, edit); 
+
+app.use('/room/list', setUrl, setUser, roomList); 
+
+app.use('/room/edit', setUrl, setUser, roomEdit); 
+app.use('/stamp', setUrl, stamp); 
+app.use('/profile', setUrl, setUser, profile); 
 
 /**
 app.get('/test', function(req, res){
@@ -64,6 +72,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// console.log(app.routes);
 
 module.exports = app;
 

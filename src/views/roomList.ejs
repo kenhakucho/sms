@@ -1,0 +1,28 @@
+      <% layout('layout') %>
+      <% if (typeof user !== 'undefined') { %>
+      <div class="white-bg">
+　      <label>ルーム一覧 サクッと消せるで</label>
+        <table border="1" width="500" cellspacing="0" cellpadding="5">
+            <thead>
+              <tr>
+                <th>id</th> 
+                <th>name</th> 
+                <th colspan="2"></th>             
+              </tr> 
+            </thead>
+          <% roomList.forEach(function(room) { %>
+            <tbody>
+              <tr>                
+                <th><%= room.id %><input type="hidden" name="name" value="<%= room.id %>" /></th> 
+                <th><input type="text" name="name" value="<%= room.name %>" /></th> 
+                <th colspan="2">
+                  <button>
+                    <a href="/room/edit/<%= room.id %>">編集</a>
+                  </button>
+                </th>  
+              </tr>
+            </tbody>
+          <% }); %>  
+        </table>
+      </div>
+      <% } %>

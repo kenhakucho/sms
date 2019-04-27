@@ -3,7 +3,7 @@
       <div class="line-bc">
         <% postList.forEach(function(post) { %>
 
-          <% if (user.id == post.user_id) { %> 
+          <% if (sesuser.id == post.user_id) { %> 
             <div class="mycomment">
               <div class="faceicon">
                 <label><%= post._madetime %></label>
@@ -64,9 +64,9 @@
     </div>
 <script>
   var roomId = <%= room.id %>;
-  var userId = <%= user.id %>;
-  var nickname = '<%= user.nickname %>';
-  var icon ='<%= user.icon %>';
+  var userId = <%= sesuser.id %>;
+  var nickname = '<%= sesuser.nickname %>';
+  var icon ='<%= sesuser.icon %>';
   var socket = io();
   const stpath = "/images/stamp/";
   const icpath = "/images/icon/";

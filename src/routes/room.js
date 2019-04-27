@@ -13,7 +13,8 @@ router.get('/:room_id', function(req, res, next) {
 
   // roomCheck
   connection.query('SELECT * FROM member WHERE room_id=? and user_id=? and enable=1 LIMIT 1',
-            [roomId, userId], function(err, rows) {
+        [roomId, userId], 
+        function(err, rows) {
     var enable = rows.length? rows[0].enable: false;
     if (enable) {
       // get posts

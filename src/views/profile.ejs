@@ -1,0 +1,38 @@
+    <% layout('layout') %>
+    <form action="/profile" method="post" enctype="multipart/form-data" class="form">
+        <p><img id="thumbnail" class="thumb_m" src="/images/icon/<%= user.icon %>"/></p>
+        <br>
+        <button class="file-wrap">
+            <label>アイコン変更 <input type="file" id="upfile" name="image_file" class="file"></label>
+        </button>
+        <br>        
+        <div class="cp_iptxt">
+          <input class="ef" width="80%" type="text" placeholder="" name="name" value="<%= user.name %>" required>
+          <label>氏名</label>
+          <span class="focus_line"><i></i></span>
+        </div>
+
+        <div class="cp_iptxt">
+          <input class="ef" type="text" placeholder="" name="nickname" value="<%= user.nickname %>" required>
+          <label>ニックネーム</label>
+          <span class="focus_line"><i></i></span>
+        </div>
+
+        <div class="cp_iptxt">
+          <input class="ef" width="80%" type="email" placeholder="" name="mail" value="<%= user.mail %>" required>
+          <label>メールアドレス</label>
+          <span class="focus_line"><i></i></span>
+        </div>
+
+        <div class="cp_iptxt">
+          <input class="ef" type="password" placeholder="" name="password" >
+          <label>パスワード</label>
+          <span class="focus_line"><i></i></span>
+        </div>
+        <br>
+        <% if (typeof errormsg !== 'undefined') { %>
+          <p class="error"><%= errormsg %></p>
+        <% } %>
+        <button type="submit" class="submit">プロフィール更新</button>
+    </form>
+

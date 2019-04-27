@@ -17,7 +17,7 @@
     <div class="clearboth"></div>
     <div class="footer">
 
-    <% if (typeof user !== 'undefined') { %>
+    <% if (typeof sesuser !== 'undefined') { %>
       <% if ( curpath != '/') { %>
         <a href="/" class="btn"><button>トップ画面</button></a>
       <% } %>
@@ -35,7 +35,7 @@
 
     </div>
 </div>
-    <% if (typeof user !== 'undefined') { %>
+    <% if (typeof ses !== 'undefined') { %>
       <span class="login-user"><%= user.name %>さんとしてログインしています</span>
     <% } %>
 

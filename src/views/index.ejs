@@ -1,5 +1,5 @@
       <% layout('layout') %>
-      <% if (typeof user !== 'undefined') { %>
+      <% if (typeof sesuser !== 'undefined') { %>
       <div class="tail">
       <div class="white-bg">
 　      <label>ルーム一覧</label>
@@ -46,7 +46,7 @@
             <div class="white-pt">
               <div class="image_list">
               <% userList.forEach(function(friend) { %>
-                <% if (user.id === friend.id) { %>
+                <% if (sesuser.id === friend.id) { %>
                   <input type="hidden" name="addMember" value="<%= friend.id %>">
                 <% } else { %>
                 <div class="image_board">
@@ -63,5 +63,6 @@
            <br>
           </form>
         </div>
+        <a href="/profile" class="btn"><button>プロフィール</button></a>
       </div>
       <% } %>

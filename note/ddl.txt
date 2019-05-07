@@ -13,7 +13,7 @@ mail varchar(255),
 password varchar(255), 
 name varchar(40), 
 nickname varchar(30), 
-icon blob,
+icon varchar(255),
 enable boolean default 1,
 made timestamp,
 PRIMARY KEY(id)

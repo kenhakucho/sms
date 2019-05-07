@@ -76,7 +76,6 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
       console.log(values);
 
       connection.query(insertMemQuery, [values], function(err, result) {
-           
         
         if (err) { 
           connection.rollback(function() {

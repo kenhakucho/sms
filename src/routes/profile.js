@@ -34,7 +34,7 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
   var mail     = req.body.mail;
   var password = req.body.password;
   var icon     = conf.usericon;
-    
+  var isImgChange = false;
   var sha512 = crypto.createHash('sha512');
   sha512.update(password);
   var hash = sha512.digest('hex');
@@ -44,10 +44,11 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
     icon = req.files.image_file[0].filename;
   }  
     
-  connection.query('SELECT * FROM user WHERE mail = ? LIMIT 1', mail, function(err, email) {
+  connection.query('SELECT * FROM user WHERE id <> ? AND mail = ? LIMIT 1', [userId, mail], 
+    function(err, email) {
     var emailExists = email.length;
     console.log("emailExists : " + emailExists);
-    if (emailExists > 1) {
+    if (emailExists > 0) {
       res.render('profile', {
         title: 'プロフィール',
         errormsg: '既に登録されているメールアドレスです'
@@ -58,8 +59,8 @@ router.post('/', upload.fields([ { name: 'image_file' } ]), function(req, res, n
         
         connection.query('UPDATE user SET name=?, nickname=?, mail=?, icon=?, password=? WHERE id=?', 
         [name, nickname, mail, 
-        isImgChange ? icon : "icon",
-        password.length > 0 ? hash : "password",
+        isImgChange ? icon : 'icon',
+        password.length > 0 ? hash : 'password',
         userId]
         , function(err, rows) {
         res.redirect('/profile');

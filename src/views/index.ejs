@@ -2,7 +2,7 @@
       <% if (typeof sesuser !== 'undefined') { %>
       <div class="tail">
       <div class="white-bg">
-　      <label>ルーム一覧</label>
+        <label>ルーム一覧</label>
         <div class="white-pt">
         <ul class="main-list image_list">
           <% roomList.forEach(function(room) { %>
@@ -19,7 +19,6 @@
                 </div>
                 </a>
               </div>
-                
             </li>
           <% }); %>
         </ul>
@@ -27,8 +26,7 @@
       </div>
       <div class="white-bg">
         <form action="/" method="post" class="form-index" enctype="multipart/form-data">
-            
-           <button type="submit" class="submit clearboth">ルーム作成</button>
+          <button type="submit" class="submit clearboth">ルーム作成</button>
 
           <div class="cp_iptxt left-form">
             <input class="ef" width="80%" type="text" placeholder="" name="room_name" required>
@@ -63,6 +61,6 @@
            <br>
           </form>
         </div>
-        <a href="/profile" class="btn"><button>プロフィール</button></a>
+        <!-- <a href="/profile" class="btn"><button>プロフィール</button></a> -->
       </div>
       <% } %>

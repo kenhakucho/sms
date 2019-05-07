@@ -1,8 +1,8 @@
 var mysql = require('mysql');
 
 var dbConfig = {
-//  host: '127.0.0.1',
-  host: 'mysql',
+  host: '127.0.0.1',
+//  host: 'mysql',
   user: 'root',
   password: 'password01',
   database: 'smsdb'
